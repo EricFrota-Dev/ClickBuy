@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <title>ClickBuy</title>
+    <meta name="description" content="" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='estilos.css') }}" />
+    <script href="./static/index.js" defer></script>
+  </head>
+  <body>
+    <header>
+      <div class="logo_container"></div>
+      <div class="navegacao">
+        <ul>
+          <li>Roupas</li>
+          <li>Eletrodomesticos</li>
+          <li>Aparelhos Eletronicos</li>
+        </ul>
+      </div>
+      <div class="perfil_container">
+        <div class="carrinho"></div>
+        <button onclick="window.location.href='/login'" class="btn_login">
+          Logar
+        </button>
+        <div class="perfil"></div>
+      </div>
+    </header>
+    <main>{{ content }}</main>
+    <footer>
+      <p>&copy; 2025 ClickBuy - Todos os direitos reservados</p>
+    </footer>
+  </body>
+</html>
