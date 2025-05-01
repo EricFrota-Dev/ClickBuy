@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sing in Page</title>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='styles/global.css') }}" />
+  </head>
+  <body>
+    <div class="container">
+      <div class="login-header">
+        <img
+          src="{{ url_for('static', filename='imagens/cb-logo.svg') }}"
+          alt="" />
+        <span>Crie a sua conta!</span>
+      </div>
+      <form class="login-form" id="completarCadastro">
+        <div class="toggle-container">
+          <input
+            class="toggle-role"
+            type="radio"
+            id="cliente"
+            name="userType"
+            value="cliente"
+            checked />
+          <label for="cliente" class="toggle-option">CLIENTE</label>
+
+          <input
+            class="toggle-role"
+            type="radio"
+            id="loja"
+            name="userType"
+            value="loja" />
+          <label for="loja" class="toggle-option">LOJA</label>
+        </div>
+        <div class="login-form-container">
+          <div class="form-item">
+            <label for="nome">Nome</label>
+            <input type="text" id="nome" />
+          </div>
+          <div class="form-item">
+            <label for="cpf">CPF</label>
+            <input type="text" id="cpf" />
+          </div>
+          <div class="form-item loja-item hide">
+            <label for="nome_fantasia">Nome Fantasia</label>
+            <input type="text" id="nome_fantasia" />
+          </div>
+          <div class="form-item loja-item hide">
+            <label for="cnpj">CNPJ</label>
+            <input type="text" id="cnpj" />
+          </div>
+          <div class="form-item loja-item hide">
+            <label for="descricao">Descricao</label>
+            <textarea type="text" id="descricao"></textarea>
+          </div>
+          <button type="submit" class="singin-button">Prosseguir</button>
+        </div>
+        <div class="if-not-have-accont">
+          <p>Already have an account? <a href="./login.html">Log in</a></p>
+        </div>
+      </form>
+    </div>
+    <script src="{{ url_for('static', filename='scripts/script.js') }}"></script>
+    <script
+      type="module"
+      src="{{ url_for('static', filename='scripts/validateSingin.js') }}"></script>
+  </body>
+</html>

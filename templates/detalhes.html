@@ -1,0 +1,24 @@
+{% extends 'index.html' %} {% block content %}
+<div class="produto-container">
+  <div class="produto-detalhes">
+    <div>
+      <div class="produto-imagem">
+        <img
+          src="http://127.0.0.1:5000/produto/imagem/{{produto.foto_produto}}"
+          alt="Imagem do Produto" />
+      </div>
+      <h1>{{produto.nome_produto}}</h1>
+      <p class="preco">{{produto.preco_atual}}</p>
+
+      <button class="btn-comprar">Comprar</button>
+    </div>
+    <h4>Descrioção do produto:</h4>
+    <p class="descricao">{{produto.descricao_produto}}</p>
+  </div>
+  <div id="detalhes" class="hide">{{produto | tojson}}</div>
+</div>
+{% endblock %} {% block extra_js %}
+<script
+  type="module"
+  src="{{ url_for('static', filename='scripts/detalhes.js') }}"></script>
+{% endblock %}

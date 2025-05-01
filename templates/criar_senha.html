@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sing in Page</title>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='styles/global.css') }}" />
+  </head>
+  <body>
+    <div class="container">
+      <div class="login-header">
+        <img
+          src="{{ url_for('static', filename='imagens/cb-icon.svg') }}"
+          alt="" />
+        <span>Crie a sua conta!</span>
+      </div>
+      <form class="login-form" id="senhaForm">
+        <div class="login-form-container">
+          <div class="form-item">
+            <label for="email">Seu email</label>
+            <input type="text" id="email" value="{{ email }}" disabled />
+          </div>
+          <div class="form-item">
+            <label for="password">Enter Password</label>
+            <img
+              class="show-password"
+              src="{{ url_for('static', filename='imagens/invisible.svg') }}"
+              alt="" />
+            <input
+              type="password"
+              id="senha"
+              class="required-singin required-singin-password" />
+            <div class="singin-error password-error hide">
+              The password must be at least 8 characters
+            </div>
+          </div>
+          <div class="form-item">
+            <label for="password">Confirm Password</label>
+            <img
+              class="show-password"
+              src="{{ url_for('static', filename='imagens/invisible.svg') }}"
+              alt="" />
+            <input
+              type="password"
+              id="confirmar-senha"
+              class="required-singin required-singin-password" />
+            <div class="singin-error password-error hide">
+              Passwords must match.
+            </div>
+          </div>
+          <div class="form-item-checbox">
+            <div class="checkbox">
+              <input type="checkbox" id="terms" onchange="aceptTerms()" />
+              <label for="terms" class="checkboxLabel">Accept the </label
+              ><a href="#">Terms of Use</a>
+            </div>
+          </div>
+          <button type="submit" class="singin-button block">Prosseguir</button>
+        </div>
+        <div class="if-not-have-accont">
+          <p>Already have an account? <a href="./login.html">Log in</a></p>
+        </div>
+      </form>
+    </div>
+    <script src="{{ url_for('static', filename='scripts/script.js') }}"></script>
+    <script
+      type="module"
+      src="{{ url_for('static', filename='scripts/validateSingin.js') }}"></script>
+  </body>
+</html>

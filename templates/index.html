@@ -8,30 +8,59 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link
       rel="stylesheet"
-      href="{{ url_for('static', filename='estilos.css') }}" />
-    <script href="./static/index.js" defer></script>
+      href="{{ url_for('static', filename='styles/global.css') }}" />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='styles/layout.css') }}" />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='styles/toast.css') }}" />
+    <script
+      type="module"
+      src="{{ url_for('static', filename='scripts/index.js') }}"
+      defer></script>
+    <script
+      type="module"
+      src="{{ url_for('static', filename='scripts/toast.js') }}"
+      defer></script>
+    <script
+      type="module"
+      src="{{ url_for('static', filename='scripts/home.js') }}"
+      defer></script>
+    <link
+      rel="icon"
+      href="{{ url_for('static', filename='imagens/cb-icon.svg') }}"
+      sizes="any" />
+    {% block extra_css %}{% endblock %}
   </head>
   <body>
     <header>
       <div class="logo_container"></div>
       <div class="navegacao">
-        <ul>
-          <li>Roupas</li>
-          <li>Eletrodomesticos</li>
-          <li>Aparelhos Eletronicos</li>
-        </ul>
+        <ul class="nav"></ul>
       </div>
       <div class="perfil_container">
-        <div class="carrinho"></div>
-        <button onclick="window.location.href='/login'" class="btn_login">
-          Logar
-        </button>
-        <div class="perfil"></div>
+        <button class="btn_entrar btn_padrao">Entrar</button>
+        <button class="btn_sair hide btn_padrao">Sair</button>
+        <button id="cart" class="btn_cart btn_padrao">Cart</button>
+        <div id="theme-control" class="theme-toggle-container btn_padrao"></div>
+        <button class="perfil"></button>
+        <aside class="hide">
+          <div class="aside_header">
+            <div id="user_name"></div>
+          </div>
+          <nav>
+            <ul id="sidebar_nav"></ul>
+          </nav>
+        </aside>
       </div>
     </header>
-    <main>{{ content }}</main>
+    {% block busca %}{% endblock %}
+    <main>{% block content %} {% endblock %}</main>
     <footer>
+      <div>redes sociais</div>
       <p>&copy; 2025 ClickBuy - Todos os direitos reservados</p>
     </footer>
+    {% block extra_js %}{% endblock %}
   </body>
 </html>

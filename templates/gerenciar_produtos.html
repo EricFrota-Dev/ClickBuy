@@ -1,0 +1,98 @@
+{% block extra_css %}
+<link
+  rel="stylesheet"
+  href="{{ url_for('static', filename='styles/gerenciar_produtos.css') }}" />
+{% endblock %} {% extends 'index.html' %} {% block content %}
+<div class="produto-campo">
+  <div class="produto-header">
+    <h3 class="produto-header-item selected hovered">Meus produtos</h3>
+    <h3 class="produto-header-item hovered">Cadastrar produto</h3>
+  </div>
+  <div class="produto-content">
+    <div id="produtos-content" class="produtos">
+      <table class="tabela-produtos"></table>
+      <div id="produto-navegation">
+        <button type="submit" class="hovered" id="btn-inicio"></button>
+        <button type="submit" class="hovered" id="btn-retornar"></button>
+        <div class="pages"></div>
+        <button type="submit" class="rotate hovered" id="btn-avançar"></button>
+        <button type="submit" class="rotate hovered" id="btn-fim"></button>
+      </div>
+    </div>
+    <div class="produtos-content" class="cadastrar hide">
+      <form
+        method="POST"
+        enctype="multipart/form-data"
+        id="cadastrar-produto-form">
+        <div>
+          <label for="nome_produto">Nome do Produto:</label>
+          <input
+            type="text"
+            id="nome_produto"
+            name="nome_produto"
+            maxlength="64"
+            required />
+        </div>
+
+        <div>
+          <label for="descricao_produto">Descrição do Produto:</label>
+          <textarea
+            id="descricao_produto"
+            name="descricao_produto"
+            required></textarea>
+        </div>
+
+        <div>
+          <label for="preco_original">Preço Original:</label>
+          <input
+            type="number"
+            id="preco_original"
+            name="preco_original"
+            step="0.01"
+            required />
+        </div>
+        <div>
+          <label for="preco_atual">Preço Atual:</label>
+          <input
+            type="number"
+            id="preco_atual"
+            name="preco_atual"
+            step="0.01"
+            required />
+        </div>
+
+        <div>
+          <label for="estoque">Estoque:</label>
+          <input type="number" id="estoque" name="estoque" value="0" required />
+        </div>
+
+        <div>
+          <label for="categoria">Categoria:</label>
+          <select id="categoria" name="categoria">
+            <option class="hide" value="" disabled selected>Categoria</option>
+            {%for cat in categorias%}
+            <option value="{{cat}}">{{cat}}</option>
+            {%endfor%}
+          </select>
+        </div>
+        <div>
+          <label for="foto_produto">Foto do Produto:</label>
+          <input
+            type="file"
+            id="foto_produto"
+            name="foto_produto"
+            accept="image/*" />
+        </div>
+
+        <button class="cadastrar-produto-btn" type="submit">
+          Cadastrar Produto
+        </button>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %} {% block extra_js %}
+<script
+  type="module"
+  src="{{ url_for('static', filename='scripts/gerenciar_produtos.js') }}"></script>
+{% endblock %}

@@ -1,31 +1,71 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
   <head>
-    <meta charset="utf-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <title>ClickBuy-Login</title>
-    <meta name="description" content="" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Login Page</title>
     <link
       rel="stylesheet"
-      href="{{ url_for('static', filename='estilos.css') }}" />
-    <script src="{{ url_for('static', filename='index.js') }}" defer></script>
+      href="{{ url_for('static', filename='styles/global.css') }}" />
   </head>
   <body>
-    <div class="login-container">
-      <div class="login-card">
-        <h1 style="text-align: center">Login</h1>
-        <div>
-          <form class="login-form">
-            <label class="hide">Email:</label>
-            <input id="email" type="text" placeholder="@email" />
-            <label class="hide">Senha:</label>
-            <input id="senha" type="password" placeholder="senha" />
-            <button type="submit" class="btn_login">Logar</button>
-            <p>Não possui conta? <a href="/signup">Cadastrar</a></p>
-          </form>
-        </div>
+    <div class="container">
+      <div class="login-header">
+        <img
+          src="{{ url_for('static', filename='imagens/cb-icon.svg') }}"
+          alt="" />
+        <p>Please login to use the plataform...</p>
       </div>
+      <form class="login-form" id="loginForm">
+        <div class="login-form-container">
+          <div class="form-item">
+            <label for="email">Enter email</label>
+            <input type="text" id="email" />
+            <div class="login-error email-error hide">User not found</div>
+          </div>
+          <div class="form-item">
+            <label for="password">Enter Password</label>
+            <input type="password" id="senha" />
+            <div class="login-error password-error hide">
+              Incorrect password
+            </div>
+          </div>
+          <div class="form-item-checbox">
+            <div class="checkbox">
+              <input type="checkbox" id="rememberMeCheckbox" />
+              <label for="rememberMeCheckbox" class="checkboxLabel"
+                >Remember me</label
+              >
+            </div>
+            <div class="forget-email">
+              <a href="#">Esqueceu sua senha?</a>
+            </div>
+          </div>
+          <button type="submit" class="login-button">Login</button>
+        </div>
+        <div class="login-form-footer">
+          <a href="#">
+            <img
+              width="30"
+              src="https://upload.wikimedia.org/wikipedia/commons/0/05/Facebook_Logo_(2019).png"
+              alt="" />
+            Facebook Login
+          </a>
+          <a href="">
+            <img
+              src="https://imagepng.org/wp-content/uploads/2019/08/google-icon.png"
+              width="30"
+              alt="" />
+            Google Login
+          </a>
+        </div>
+        <div class="if-not-have-accont">
+          <span>Don't have an account? <a href="./signup">Sign up</a></span>
+        </div>
+      </form>
     </div>
+    <script
+      type="module"
+      src="{{ url_for('static', filename='scripts/login.js') }}"></script>
   </body>
 </html>
