@@ -1,5 +1,6 @@
-import { lupaIcon } from "./constants.js";
+import { lupaIcon, urlBase } from "./constants.js";
 import { doubleArrow, arrow } from "./constants.js";
+import { LoadingSpinner } from "./loadingSpiner.js";
 
 const buscaBtn = document.querySelector("#busca-btn");
 buscaBtn.innerHTML = lupaIcon;
@@ -19,25 +20,28 @@ document.querySelector("#busca-form").addEventListener("submit", (e) => {
   buscarProdutosFiltrados();
 });
 
-let proutosIniciais = {
-  ofertas: {
+let proutosIniciais = [
+  {
     total: null,
     pages: null,
     current_page: null,
     products: [],
   },
-};
+];
 
 async function buscarProdutosIniciais() {
   document.querySelector("#ver_mais_ofertas").addEventListener("click", () => {
     alert("clicou");
   });
-  proutosIniciais.ofertas = await buscarProdutos("ofertas");
   let campo = document.querySelector("#produtos ol");
+  console.log("tentou loading");
+  let spinner = new LoadingSpinner(campo);
+  spinner.show();
+  proutosIniciais[0] = await buscarProdutos("ofertas");
   console.log(proutosIniciais);
-  campo.innerHTML = proutosIniciais.ofertas.products
+  campo.innerHTML = proutosIniciais[0].products
     .map(({ foto_produto, nome_produto, preco_atual, preco_original }, i) => {
-      return `<li>
+      return `<li class="card-produto-oferta">
                 <div product-img>
                     <img src="http://127.0.0.1:5000/produto/imagem/${foto_produto}"alt="${nome_produto}" />
                 </div>
@@ -62,8 +66,20 @@ async function buscarProdutosIniciais() {
             </li>`;
     })
     .join("");
+  distribuirEventos(".card-produto-oferta", proutosIniciais[0].products);
+
+  spinner.hide();
 }
+
 buscarProdutosIniciais();
+function AbrirDetalhes(id) {
+  window.location.href = `${urlBase}produto/${id}`;
+}
+function distribuirEventos(identificador, itens) {
+  document.querySelectorAll(identificador).forEach((card, index) => {
+    card.addEventListener("click", () => AbrirDetalhes(itens[index].id));
+  });
+}
 
 async function buscarProdutos(filtro, params = null, page = 1, per_page = 3) {
   const produtos = await fetch(
@@ -93,6 +109,10 @@ async function buscarProdutosFiltrados(
   page = 1,
   qntdPorPAge = 8
 ) {
+  if (texto == "") return;
+  let campo = document.querySelector(".section-container");
+  let spinner = new LoadingSpinner(campo);
+  spinner.show();
   const productsBuscados = await buscarProdutos(
     ord,
     JSON.stringify(body),
@@ -101,7 +121,7 @@ async function buscarProdutosFiltrados(
   );
   if (productsBuscados) {
     console.log(productsBuscados);
-    document.querySelector(".section-container").innerHTML = `<div id="ofertas">
+    campo.innerHTML = `<div id="ofertas">
     <div id="produtos">
     <div class="header">
       <h3>Resultados: ${productsBuscados.total}</h3>
@@ -112,7 +132,7 @@ async function buscarProdutosFiltrados(
           let desconto = (100 - (preco_atual / preco_original) * 100).toFixed(
             0
           );
-          return `<li>
+          return `<li class="card-produto-filtro">
                 <div product-img>
                     <img src="http://127.0.0.1:5000/produto/imagem/${foto_produto}"alt="${nome_produto}" />
                 </div>
@@ -148,6 +168,7 @@ async function buscarProdutosFiltrados(
       </div>
     </div>
   </div>`;
+    distribuirEventos(".card-produto-filtro", productsBuscados.products);
     document
       .querySelectorAll(".produto-navegation button")
       .forEach((btn, i) => {
@@ -170,4 +191,5 @@ async function buscarProdutosFiltrados(
         });
       });
   }
+  spinner.hide();
 }

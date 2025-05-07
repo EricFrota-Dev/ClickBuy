@@ -37,7 +37,7 @@ document.querySelectorAll(".produto-header-item").forEach((item, i, items) => {
   });
 });
 
-document.querySelectorAll("#produto-navegation button").forEach((btn, i) => {
+document.querySelectorAll(".produto-navegation button").forEach((btn, i) => {
   btn.innerHTML = i == 2 || i == 1 ? doubleArrow() : arrow();
 });
 

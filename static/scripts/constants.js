@@ -73,3 +73,5 @@ export const lupaIcon = `<svg width="20" height="20" viewBox="0 0 800 800" fill=
 <path d="M566.667 333.333C566.667 462.2 462.2 566.667 333.333 566.667C204.467 566.667 100 462.2 100 333.333C100 204.467 204.467 100 333.333 100C462.2 100 566.667 204.467 566.667 333.333Z" stroke="CurrentColor" stroke-width="66.6667"/>
 </svg>
 `;
+
+export const urlBase = "http://127.0.0.1:5000/";

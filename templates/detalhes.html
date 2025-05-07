@@ -1,22 +1,29 @@
-{% extends 'index.html' %} {% block content %}
-<div class="produto-container">
+{% extends 'index.html' %} {% block extra_css %}
+<link
+  rel="stylesheet"
+  href="{{ url_for('static', filename='styles/detalhes.css') }}" />
+{% endblock %} {% block content %}
+<div class="detalhe-container">
   <div class="produto-detalhes">
-    <div>
+    <div class="conteudo-principal">
       <div class="produto-imagem">
         <img
           src="http://127.0.0.1:5000/produto/imagem/{{produto.foto_produto}}"
           alt="Imagem do Produto" />
       </div>
-      <h1>{{produto.nome_produto}}</h1>
-      <p class="preco">{{produto.preco_atual}}</p>
+      <div class="detalhe-principal">
+        <h1>{{produto.nome_produto}}</h1>
+        <p class="preco">{{produto.preco_atual}}</p>
 
-      <button class="btn-comprar">Comprar</button>
+        <button class="btn-comprar btn_padrao">Comprar</button>
+      </div>
     </div>
     <h4>Descrioção do produto:</h4>
     <p class="descricao">{{produto.descricao_produto}}</p>
   </div>
   <div id="detalhes" class="hide">{{produto | tojson}}</div>
 </div>
+
 {% endblock %} {% block extra_js %}
 <script
   type="module"
