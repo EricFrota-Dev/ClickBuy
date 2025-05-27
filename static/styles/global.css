@@ -437,12 +437,36 @@ textarea {
   max-height: 60%;
   padding: 20px;
 }
+.modal-container {
+  max-height: 445px;
+  overflow-y: overlay;
+  scrollbar-gutter: stable both-edges;
+  box-sizing: border-box;
+  padding-bottom: 10px;
+}
 .itens-carrinho {
   margin: 0;
   padding: 0;
   display: flex;
   flex-direction: column;
   gap: 10px;
+}
+.itens-carrinho::-webkit-scrollbar {
+  width: 8px;
+}
+
+.itens-carrinho::-webkit-scrollbar-track {
+  background: var(--color-background);
+  border-radius: 10px;
+}
+
+.itens-carrinho::-webkit-scrollbar-thumb {
+  background: var(--color-border);
+  border-radius: 10px;
+}
+
+.itens-carrinho::-webkit-scrollbar-thumb:hover {
+  background: #999;
 }
 .itens-carrinho li {
   display: flex;
@@ -521,4 +545,9 @@ input[type="number"]::-webkit-inner-spin-button,
 input[type="number"]::-webkit-outer-spin-button {
   -webkit-appearance: none;
   margin: 0;
+}
+.modal-btn {
+  display: flex;
+  justify-content: space-around;
+  margin-top: 20px;
 }

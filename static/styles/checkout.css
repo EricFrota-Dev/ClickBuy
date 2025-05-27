@@ -27,6 +27,10 @@ h4 {
   font-weight: lighter;
 }
 
+#checkout-adress input {
+  height: 50px;
+}
+
 #checkout-resume,
 #checkout-adress {
   padding: 20px 50px;

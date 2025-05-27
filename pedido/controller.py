@@ -3,7 +3,7 @@ from auth.token import token_required
 from extensions import db
 from flask import jsonify, render_template, request
 
-from models import Pedido, PedidoProduto, Produto
+from models import Endereco, Pedido, PedidoProduto, Produto
 
 class PrdidoController:
 
@@ -12,8 +12,9 @@ class PrdidoController:
 
         produtos_data = data.get("products", [])
         user_data = data.get("user")
+        endereco_data = data.get("endereco")
 
-        if not produtos_data or not user_data:
+        if not produtos_data or not user_data or not endereco_data:
             return jsonify(error="Dados incompletos"), 400
 
         user_id = user_data.get("id")
@@ -35,15 +36,38 @@ class PrdidoController:
             if produto.estoque < qtd:
                 return jsonify(error=f"Estoque insuficiente para o produto '{produto.nome_produto}'"), 400
 
-            # Atualiza total do pedido
             total += float(produto.preco_atual) * qtd
-
-            # Reduz estoque
             produto.estoque -= qtd
 
-            # Prepara item de pedido
             item = PedidoProduto(produto=produto, quantidade=qtd)
             itens_pedido.append(item)
+
+        # Verifica se o endereço já existe para o usuário (opcional: evita duplicação)
+        endereco = Endereco.query.filter_by(
+            user_id=user_id,
+            cep=endereco_data.get("cep"),
+            logradouro=endereco_data.get("logradouro"),
+            numero=endereco_data.get("numero"),
+            bairro=endereco_data.get("bairro"),
+            cidade=endereco_data.get("cidade"),
+            estado=endereco_data.get("estado"),
+            complemento=endereco_data.get("complemento")
+        ).first()
+
+        if not endereco:
+            # Cria novo endereço
+            endereco = Endereco(
+                user_id=user_id,
+                cep=endereco_data.get("cep"),
+                logradouro=endereco_data.get("logradouro"),
+                numero=endereco_data.get("numero"),
+                bairro=endereco_data.get("bairro"),
+                cidade=endereco_data.get("cidade"),
+                estado=endereco_data.get("estado"),
+                complemento=endereco_data.get("complemento")
+            )
+            db.session.add(endereco)
+            db.session.flush()  # Garante que endereco.id esteja disponível
 
         # Cria o pedido
         pedido = Pedido(
@@ -53,6 +77,7 @@ class PrdidoController:
             status="pending",
             data_pedido=date.today(),
             data_criacao=date.today(),
+            endereco_id=endereco.id,
             itens=itens_pedido
         )
 
@@ -60,6 +85,7 @@ class PrdidoController:
         db.session.commit()
 
         return jsonify(ok=True), 201
+
 
 
     def update():

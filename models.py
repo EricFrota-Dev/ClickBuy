@@ -33,6 +33,7 @@ class User(db.Model):
     login = db.relationship('DadosLogin', back_populates='user')
     loja = db.relationship('Loja', back_populates='user', uselist=False)
     pedidos = db.relationship("Pedido", back_populates="user")
+    enderecos = db.relationship('Endereco', back_populates='user', cascade="all, delete-orphan")
 
     def to_dict(self):
         return {
@@ -128,10 +129,13 @@ class Pedido(db.Model):
     total = db.Column(db.Numeric(10, 2), nullable=False, default=0.00)
     loja_id = db.Column(db.Integer, db.ForeignKey('loja.id'), nullable=False)
     data_criacao = db.Column(db.Date, default=date.today)
+    endereco_id = db.Column(db.Integer, db.ForeignKey('endereco.id'), nullable=False)
 
     user = db.relationship('User', back_populates='pedidos')
     itens = db.relationship("PedidoProduto", back_populates="pedido", cascade="all, delete-orphan")
     loja = db.relationship('Loja', back_populates='pedidos')
+    endereco = db.relationship('Endereco', back_populates='pedidos')
+
 
     def to_dict(self):
         return {
@@ -141,6 +145,7 @@ class Pedido(db.Model):
             "data_pedido": self.data_pedido.isoformat() if self.data_pedido else None,
             "status": self.status,
             "total": float(self.total),
+            "endereco": self.endereco.to_dict() if self.endereco else None,
             "produtos": [
                 {
                     "id_produto": item.id_produto,
@@ -164,3 +169,31 @@ class PedidoProduto(db.Model):
 
     pedido = db.relationship("Pedido", back_populates="itens")
     produto = db.relationship("Produto", back_populates="itens")
+
+class Endereco(db.Model):
+    __tablename__ = 'endereco'
+
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    cep = db.Column(db.String(9), nullable=False)
+    logradouro = db.Column(db.String(128), nullable=False)
+    numero = db.Column(db.String(10), nullable=False)
+    bairro = db.Column(db.String(64), nullable=False)
+    cidade = db.Column(db.String(64), nullable=False)
+    estado = db.Column(db.String(2), nullable=False)
+    complemento = db.Column(db.String(128), nullable=True)
+
+    user = db.relationship('User', back_populates='enderecos')
+    pedidos = db.relationship('Pedido', back_populates='endereco')
+
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "cep": self.cep,
+            "logradouro": self.logradouro,
+            "numero": self.numero,
+            "bairro": self.bairro,
+            "cidade": self.cidade,
+            "estado": self.estado,
+            "complemento": self.complemento
+        }

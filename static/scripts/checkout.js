@@ -10,6 +10,18 @@ const btnComprar = document.querySelector("#confirm-payment");
 cart.renderCartItems(checkoutContainer);
 
 document.addEventListener("click", () => updateResumo());
+const campos = [
+  "#cep",
+  "#logradouro",
+  "#bairro",
+  "#cidade",
+  "#estado",
+  "#numero",
+];
+
+campos.forEach((seletor) => {
+  document.querySelector(seletor).addEventListener("input", validate);
+});
 
 // Elementos
 const subtotalSpan = document.querySelector("#subtotal");
@@ -106,17 +118,27 @@ async function calcularFrete(cep) {
   }
 }
 function validate() {
-  isOk
-    ? btnComprar.removeAttribute("disabled")
-    : btnComprar.setAttribute("disabled", true);
+  if (
+    isOk &&
+    document.querySelector("#cep").value &&
+    document.querySelector("#logradouro").value &&
+    document.querySelector("#bairro").value &&
+    document.querySelector("#cidade").value &&
+    document.querySelector("#estado").value &&
+    document.querySelector("#numero").value
+  ) {
+    btnComprar.removeAttribute("disabled");
+  } else {
+    btnComprar.setAttribute("disabled", true);
+  }
 }
 
 btnComprar.addEventListener("click", async () => {
-  const user = user.getUser();
+  const userData = user.getUser();
   const products = cart.getProductsInCart();
   const pedido = {
     user: {
-      id: user.id,
+      id: userData.id,
     },
     products: products.map(({ loja_id, id, quantidade }) => {
       return {
@@ -125,6 +147,15 @@ btnComprar.addEventListener("click", async () => {
         loja_id: loja_id,
       };
     }),
+    deliveryAdress: {
+      cep: document.querySelector("#cep").value,
+      rua: document.querySelector("#logradouro").value,
+      bairro: document.querySelector("#bairro").value,
+      cidade: document.querySelector("#cidade").value,
+      estado: document.querySelector("#estado").value,
+      numero: document.querySelector("#numero").value,
+      complemento: document.querySelector("#complemento").value,
+    },
   };
 
   const loadingSpiner = new LoadingSpinner(document.querySelector("main"));

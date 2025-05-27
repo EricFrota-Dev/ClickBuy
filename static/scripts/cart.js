@@ -82,10 +82,10 @@ export default class Cart {
           <ol class="itens-carrinho">
             ${this.listItems(cartProducts)}
           </ol>
-          <div class="modal-btn">
-            <button class="btn_padrao btn-finalizar"><h3>Finalizar compra</h3></button>
-            <button class="btn_padrao btn-continuar"><h3>Continuar comprando</h3></button>
-          </div>
+        </div>
+        <div class="modal-btn">
+          <button class="btn_padrao btn-finalizar"><h3>Finalizar compra</h3></button>
+          <button class="btn_padrao btn-continuar"><h3>Continuar comprando</h3></button>
         </div>
       </div>
     `;

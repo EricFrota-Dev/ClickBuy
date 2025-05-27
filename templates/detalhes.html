@@ -14,7 +14,9 @@
         />
       </div>
       <div class="detalhe-principal">
-        <h1>{{produto.nome_produto}}</h1>
+        <h2>{{produto.nome_produto}}</h2>
+        <p>Quantidade disponivel: <span>{{produto.estoque}}</span></p>
+        <p><del>{{produto.preco_original}}</del></p>
         <p class="preco">{{produto.preco_atual}}</p>
 
         <button id="btn-comprar" class="btn-comprar btn_padrao">Comprar</button>
