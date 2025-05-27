@@ -1,0 +1,15 @@
+{% extends 'index.html' %} {% block extra_css %}
+<link
+  rel="stylesheet"
+  href="{{ url_for('static', filename='styles/overview.css') }}"
+/>
+{% endblock %} {% block content %}
+
+<h1>pagamento efetuado com sucesso!</h1>
+
+{% endblock %} {% block extra_js %}
+<script
+  type="module"
+  src="{{ url_for('static', filename='scripts/overview.js') }}"
+></script>
+{% endblock %}

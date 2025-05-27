@@ -149,7 +149,7 @@ btnComprar.addEventListener("click", async () => {
     }),
     deliveryAdress: {
       cep: document.querySelector("#cep").value,
-      rua: document.querySelector("#logradouro").value,
+      logradouro: document.querySelector("#logradouro").value,
       bairro: document.querySelector("#bairro").value,
       cidade: document.querySelector("#cidade").value,
       estado: document.querySelector("#estado").value,
@@ -157,17 +157,20 @@ btnComprar.addEventListener("click", async () => {
       complemento: document.querySelector("#complemento").value,
     },
   };
-
+  console.log(pedido);
   const loadingSpiner = new LoadingSpinner(document.querySelector("main"));
   loadingSpiner.show();
-  await fetch(`${urlBase}pedido`, {
+  const response = await fetch(`${urlBase}pedido/register`, {
     method: "POST",
-    headers: { "Content-Type": "Aplication-json" },
+    headers: { "Content-Type": "application/json" },
     credentials: "include",
-    body: pedido,
-  })
-    .then((res) => res.json())
-    .then((data) => console.log(data))
-    .catch((err) => console.error(err))
-    .finally(() => loadingSpiner.hide());
+    body: JSON.stringify(pedido),
+  });
+  const data = await response.json();
+  if (data.init_point) {
+    window.location.href = data.init_point;
+  } else {
+    console.error("Erro ao criar preferência de pagamento", data);
+  }
+  loadingSpiner.hide();
 });

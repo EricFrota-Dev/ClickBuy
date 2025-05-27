@@ -433,13 +433,14 @@ textarea {
   border-radius: 20px;
   min-width: 200px;
   min-height: 220px;
-  max-width: 90%;
+  max-width: 500px;
   max-height: 60%;
   padding: 20px;
 }
 .modal-container {
   max-height: 445px;
   overflow-y: overlay;
+  overflow-x: hidden;
   scrollbar-gutter: stable both-edges;
   box-sizing: border-box;
   padding-bottom: 10px;
@@ -472,7 +473,9 @@ textarea {
   display: flex;
   align-items: center;
   height: 80px;
+  max-width: 420px;
   background-color: var(--color-background);
+  min-width: 0;
 }
 .itens-carrinho li .img {
   height: 60px;
@@ -481,6 +484,7 @@ textarea {
   display: flex;
   justify-content: center;
   align-items: center;
+  flex: 2;
 }
 .itens-carrinho li .img img {
   height: 60px;
@@ -490,29 +494,28 @@ textarea {
   width: 30px;
   height: 1.2rem;
 }
+
 .cart-item-desc {
   display: flex;
   flex-direction: column;
+  flex: 8;
 }
 .cart-item-desc div {
   display: flex;
   align-items: center;
   gap: 10px;
+  width: 350px;
+  min-width: 0;
+}
+.cart-item-desc div p {
+  white-space: nowrap;
+  overflow-x: hidden;
+  text-overflow: ellipsis;
+  width: 100%;
 }
 .cart-item-desc div input {
   padding: 0 0 0 8px;
   width: 40px;
-}
-
-.cart-item-desc div h3 {
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-.cart-item-desc div p {
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
 }
 .cart-item-desc div button:hover {
   scale: 105%;
