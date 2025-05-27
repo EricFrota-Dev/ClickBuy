@@ -22,13 +22,14 @@ window.addEventListener("DOMContentLoaded", () => {
     localStorage.removeItem("toastMessage");
   }
 });
-
+export const cart = new Cart();
+cart.init();
 verificarAutenticacao();
 
 export async function deslogar() {
-  localStorage.removeItem("token", "user");
-
+  document.cookie = "token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
   distribuirItensDeNavegacao();
+  user.clear();
   window.location.href = "/";
 }
 export function showLoading() {
@@ -41,11 +42,6 @@ export function hideLoading() {
 export function distribuirItensDeNavegacao() {
   const sideBar = document.querySelector("#sidebar_nav");
   const userName = document.querySelector("#user_name");
-  const cart = new Cart();
-  cart.element.addEventListener("click", () => {
-    cart.click;
-  });
-  console.log(cart);
 
   setTimeout(() => {
     sideBar.innerHTML += itensDeNavegacao

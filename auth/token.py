@@ -1,6 +1,6 @@
 import jwt
 import datetime
-from flask import jsonify,redirect,url_for, request
+from flask import redirect, session,url_for, request
 from functools import wraps
 
 SECRET_KEY = 'meu_token'
@@ -18,19 +18,16 @@ def decode_token(token):
 def token_required(f):
     @wraps(f)
     def decorated(*args, **kwargs):
-        token = None
-        if 'Authorization' in request.headers:
-            parts = request.headers['Authorization'].split()
-            if len(parts) == 2 and parts[0] == 'Bearer':
-                token = parts[1]
+        token = request.cookies.get('token')
         if not token:
-            return jsonify(redirect=url_for('auth.login')),401
+            session['next'] = request.path
+            return redirect(url_for('auth.login'))
         try:
             data = decode_token(token)
             current_user = data['user_id']
         except jwt.ExpiredSignatureError:
-            return jsonify(redirect=url_for('auth.login')),401
+            return redirect(url_for('auth.login'))
         except jwt.InvalidTokenError:
-            return jsonify(redirect=url_for('auth.login')),401
+            return redirect(url_for('auth.login'))
         return f(current_user, *args, **kwargs)
     return decorated

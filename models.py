@@ -87,11 +87,6 @@ class Loja(db.Model):
             "nome_fantasia": self.nome_fantasia
         }
 
-pedido_produto = db.Table('pedido_produto',
-    db.Column('id_pedido', db.Integer, db.ForeignKey('pedido.id'), primary_key=True),
-    db.Column('id_produto', db.Integer, db.ForeignKey('produto.id'), primary_key=True)
-)
-
 class Produto(db.Model):
     __tablename__ = 'produto'
 
@@ -107,7 +102,7 @@ class Produto(db.Model):
     foto_produto = db.Column(db.String(64), nullable=False)
 
     loja = db.relationship('Loja', back_populates='produtos')
-    pedidos = db.relationship('Pedido', secondary=pedido_produto, back_populates='produtos')
+    itens = db.relationship("PedidoProduto", back_populates="produto")
 
     def to_dict(self):
         return {
@@ -135,7 +130,7 @@ class Pedido(db.Model):
     data_criacao = db.Column(db.Date, default=date.today)
 
     user = db.relationship('User', back_populates='pedidos')
-    produtos = db.relationship('Produto', secondary=pedido_produto, back_populates='pedidos')
+    itens = db.relationship("PedidoProduto", back_populates="pedido", cascade="all, delete-orphan")
     loja = db.relationship('Loja', back_populates='pedidos')
 
     def to_dict(self):
@@ -146,6 +141,26 @@ class Pedido(db.Model):
             "data_pedido": self.data_pedido.isoformat() if self.data_pedido else None,
             "status": self.status,
             "total": float(self.total),
-            "produtos": [produto.to_dict() for produto in self.produtos],
+            "produtos": [
+                {
+                    "id_produto": item.id_produto,
+                    "nome_produto": item.produto.nome_produto,
+                    "quantidade": item.quantidade,
+                    "preco_unitario": float(item.produto.preco_atual),
+                    "subtotal": float(item.quantidade * item.produto.preco_atual)
+                }
+                for item in self.itens
+            ],
             "data_criacao": self.data_criacao.isoformat() if self.data_criacao else None,
         }
+    
+class PedidoProduto(db.Model):
+    __tablename__ = 'pedido_produto'
+    __table_args__ = {'extend_existing': True}
+
+    id_pedido = db.Column(db.Integer, db.ForeignKey('pedido.id'), primary_key=True)
+    id_produto = db.Column(db.Integer, db.ForeignKey('produto.id'), primary_key=True)
+    quantidade = db.Column(db.Integer, nullable=False, default=1)
+
+    pedido = db.relationship("Pedido", back_populates="itens")
+    produto = db.relationship("Produto", back_populates="itens")

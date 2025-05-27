@@ -1,0 +1,77 @@
+.checkout {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  background-color: var(--color-background);
+}
+input {
+  background-color: var(--color-background);
+}
+h1 {
+  margin: 0;
+  padding: 10px 50px;
+  background-color: var(--color-background);
+  border-bottom: 1px solid var(--color-border);
+}
+p,
+h4,
+h3 {
+  margin: 10px 0;
+}
+h4,
+h3,
+p {
+  display: flex;
+  justify-content: space-between;
+}
+h4 {
+  font-weight: lighter;
+}
+
+#checkout-resume,
+#checkout-adress {
+  padding: 20px 50px;
+}
+#checkout-items h4 {
+  padding-top: 20px;
+  border-top: 1px solid var(--color-border);
+}
+#confirm-payment {
+  display: flex;
+  width: 100%;
+  height: 40px;
+  font-weight: bold;
+  transition: all 0.3s;
+  position: relative;
+  color: white;
+  background-image: linear-gradient(
+    315deg,
+    var(--color-secondary),
+    var(--color-primary)
+  );
+}
+#confirm-payment:after {
+  color: white;
+  content: "Comprar";
+  position: absolute;
+  padding-top: 9px;
+  left: 0px;
+  top: 0px;
+  right: 0px;
+  bottom: 0px;
+  opacity: 0;
+  background-image: linear-gradient(
+    45deg,
+    var(--color-secondary),
+    var(--color-primary)
+  );
+  transition: all 0.3s ease-in-out;
+}
+
+#confirm-payment:hover:after {
+  opacity: 1;
+}
+#confirm-payment:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  pointer-events: none;
+}

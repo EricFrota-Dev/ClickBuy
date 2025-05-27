@@ -1,10 +1,11 @@
 # auth/controller.py
 
-from flask import request, jsonify, url_for, render_template, redirect
+from flask import request, jsonify, session, url_for, render_template, redirect
+import jwt
 from models import DadosLogin, User, Loja
 from extensions import db
 from security import hash_password, check_password
-from auth.token import generate_token, token_required
+from auth.token import decode_token, generate_token, token_required
 
 class AuthController:
     @staticmethod
@@ -72,6 +73,7 @@ class AuthController:
             login = DadosLogin.query.filter_by(email=data["email"]).first()
             if not login or not check_password(data["senha"], login.senha):
                 return jsonify(message="Credenciais inválidas"), 401
+
             user = User.query.filter_by(login_id=login.id).first()
             if not user:
                 return jsonify(message="Usuário não encontrado"), 404
@@ -83,21 +85,40 @@ class AuthController:
                 userData["loja"] = loja.to_dict()
 
             token = generate_token(user.id)
-            return jsonify(token=token, user=userData)
+
+            # Redirecionar se necessário
+            next_page = session.pop("next", None)
+            response_data = {
+                "token": token,
+                "user": userData,
+                "redirect": next_page or "/"
+            }
+            return jsonify(response_data)
+
         return render_template("login.html")
     
-    @token_required
-    def authenticate(user_id):
-        print(user_id)
+    def authenticate():
+        token = request.cookies.get('token')
+        if not token:
+            return jsonify(user=None, error="Token ausente"), 401
+
+        try:
+            data = decode_token(token)
+            user_id = data.get('user_id')
+        except jwt.ExpiredSignatureError:
+            return jsonify(user=None, error="Token expirado"), 401
+        except jwt.InvalidTokenError:
+            return jsonify(user=None, error="Token inválido"), 401
+
         user = User.query.filter_by(id=user_id).first()
-        userData = {}
-        if user:
-            userData = user.to_dict()
-            if user.role == "loja":
-                loja = Loja.query.filter_by(user_id = user_id).first()
-                if loja:
-                    userData["loja"] = loja.to_dict()
-            print(userData)
-            return jsonify(user=userData), 200
-        else:
-            return jsonify(message="Usuário não encontrado"), 400
+        if not user:
+            return jsonify(user=None, error="Usuário não encontrado"), 404
+
+        userData = user.to_dict()
+
+        if user.role == "loja":
+            loja = Loja.query.filter_by(user_id=user_id).first()
+            if loja:
+                userData["loja"] = loja.to_dict()
+
+        return jsonify(user=userData), 200

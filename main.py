@@ -5,12 +5,15 @@ from config import Config
 from auth.routes import bp as auth_bp
 from produto.routes import bp as produto_bp
 from pedido.routes import bp as pedido_bp
+from flask_cors import CORS
 
 def create_app():
     app = Flask(__name__)
+    app.secret_key = "minha_chave_super_secreta_123" 
     app.config.from_object(Config)
     app.config['UPLOAD_FOLDER'] = 'uploads'
     app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024
+    CORS(app, supports_credentials=True)
 
     db.init_app(app)
     migrate.init_app(app, db)

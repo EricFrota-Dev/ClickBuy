@@ -32,11 +32,11 @@ async function handleSubmit(e) {
       senha: document.querySelector("#senha").value,
     }),
   });
-  const { token, user } = await response.json();
+  const { token, user, redirect } = await response.json();
   if (token && user) {
-    localStorage.setItem("token", token);
+    document.cookie = `token=${token}; path=/; max-age=3600`;
     userData.setUser(user);
-    window.location.href = "/";
+    window.location.href = redirect;
   } else {
     Toast.sentToast(data.message, "fail");
   }

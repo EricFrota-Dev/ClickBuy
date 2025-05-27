@@ -155,7 +155,7 @@ async function getProducts(page = 1, per_page = qntd) {
       let html = data.products
         .map(({ foto_produto, nome_produto, preco_atual, estoque }) => {
           return `<tr>
-          <td class="campo-foto"><img class="produto-img-table" src="http://127.0.0.1:5000/produto/imagem/${foto_produto}"${foto_produto} alt="${nome_produto}"/></td>
+          <td class="campo-foto"><img class="produto-img-table" src="http://127.0.0.1:5000/produto/imagem/${foto_produto}" alt="${nome_produto}"/></td>
           <td>${nome_produto}</td>
           <td>${preco_atual.toLocaleString("pt-br", {
             style: "currency",

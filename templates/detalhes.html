@@ -1,7 +1,8 @@
 {% extends 'index.html' %} {% block extra_css %}
 <link
   rel="stylesheet"
-  href="{{ url_for('static', filename='styles/detalhes.css') }}" />
+  href="{{ url_for('static', filename='styles/detalhes.css') }}"
+/>
 {% endblock %} {% block content %}
 <div class="detalhe-container">
   <div class="produto-detalhes">
@@ -9,13 +10,14 @@
       <div class="produto-imagem">
         <img
           src="http://127.0.0.1:5000/produto/imagem/{{produto.foto_produto}}"
-          alt="Imagem do Produto" />
+          alt="Imagem do Produto"
+        />
       </div>
       <div class="detalhe-principal">
         <h1>{{produto.nome_produto}}</h1>
         <p class="preco">{{produto.preco_atual}}</p>
 
-        <button class="btn-comprar btn_padrao">Comprar</button>
+        <button id="btn-comprar" class="btn-comprar btn_padrao">Comprar</button>
       </div>
     </div>
     <h4>Descrioção do produto:</h4>
@@ -27,5 +29,6 @@
 {% endblock %} {% block extra_js %}
 <script
   type="module"
-  src="{{ url_for('static', filename='scripts/detalhes.js') }}"></script>
+  src="{{ url_for('static', filename='scripts/detalhes.js') }}"
+></script>
 {% endblock %}
