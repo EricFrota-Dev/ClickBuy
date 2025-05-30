@@ -1,0 +1,133 @@
+.order-card {
+  background-color: var(--color-background);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-pattern);
+  padding: 1.5rem;
+  margin: 1rem auto;
+  max-width: 800px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+}
+
+.order-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid var(--color-darker);
+  padding-bottom: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.order-header h2 {
+  font-size: 1.2rem;
+  color: var(--color-primary);
+}
+
+.order-status {
+  background-image: linear-gradient(
+    45deg,
+    var(--color-warning),
+    var(--color-error)
+  );
+  color: var(--color-font);
+  padding: 0.25rem 0.75rem;
+  border-radius: var(--radius-pattern);
+  font-size: 0.875rem;
+  font-weight: 600;
+  text-transform: capitalize;
+  pointer-events: none;
+  transition: all 0.6s;
+  position: relative;
+}
+.pending {
+  pointer-events: all !important;
+}
+.order-status:hover {
+  background-image: linear-gradient(
+    315deg,
+    var(--color-warning),
+    var(--color-error)
+  );
+  color: var(--color-background);
+  scale: 105%;
+}
+
+.order-info p,
+.order-products p,
+.order-address p {
+  margin: 0.3rem 0;
+  color: var(--color-font);
+}
+
+.order-products {
+  background-color: var(--color-background-secunario);
+  border-radius: var(--radius-pattern);
+  padding: 1rem;
+  margin-bottom: 1rem;
+}
+
+.product-item {
+  color: var(--color-font);
+  display: flex;
+  align-items: center;
+  margin-bottom: 0.5rem;
+  max-height: 60px;
+  border: 1px solid var(--color-border);
+  background-color: var(--color-background);
+  overflow: hidden;
+  border-radius: 8px;
+  padding-right: 8px;
+  transition: all 0.6s;
+}
+.product-item:hover {
+  color: var(--color-primary);
+  scale: 103%;
+  cursor: pointer;
+}
+
+.product-item span {
+  font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.product-item .start {
+  min-width: 60px;
+  max-width: 60px;
+  flex-shrink: 0;
+}
+
+.product-item .middle {
+  flex: 1;
+  margin: 0 0.5rem;
+}
+
+.product-item .end {
+  min-width: 80px;
+  max-width: 60px;
+  flex-shrink: 0;
+  text-align: right;
+  font-weight: bold;
+}
+.product-item span img {
+  height: 60px;
+  width: auto;
+}
+
+.order-total {
+  text-align: right;
+  font-size: 1.1rem;
+  font-weight: bold;
+  color: var(--color-primary);
+  margin-top: 1rem;
+}
+
+.order-address {
+  font-size: 0.9rem;
+  color: var(--color-font);
+  margin-top: 1rem;
+}
+
+.order-address strong {
+  color: var(--color-primary);
+}

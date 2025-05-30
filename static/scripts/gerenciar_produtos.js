@@ -1,4 +1,10 @@
-import { deleteIcon, doubleArrow, editIcon, arrow } from "./constants.js";
+import {
+  urlBase,
+  deleteIcon,
+  doubleArrow,
+  editIcon,
+  arrow,
+} from "./constants.js";
 import { Auth } from "./auth.js";
 import { user } from "./userData.js";
 import { LoadingSpinner } from "./loadingSpiner.js";
@@ -72,7 +78,7 @@ document
     }
 
     fetch(
-      `http://127.0.0.1:5000/produto/${
+      `${urlBase}produto/${
         tipoCadastro === "POST"
           ? `register/${user.data.loja.id}`
           : `update/${user.data.loja.id}/${produtoId}`
@@ -109,7 +115,7 @@ document
         );
 
         // Redireciona só se deu certo
-        window.location.href = `http://127.0.0.1:5000/loja/${user.data.loja.id}/produtos/gerenciar`;
+        window.location.href = `${urlBase}loja/${user.data.loja.id}/produtos/gerenciar`;
       })
       .catch((error) => {
         console.error(error);
@@ -124,7 +130,7 @@ document
         );
 
         // Também redireciona em caso de erro (se quiser)
-        window.location.href = `http://127.0.0.1:5000/loja/${user.data.loja.id}/produtos/gerenciar`;
+        window.location.href = `${urlBase}loja/${user.data.loja.id}/produtos/gerenciar`;
       });
   });
 let produtos;
@@ -135,7 +141,7 @@ async function getProducts(page = 1, per_page = qntd) {
   spinner.show();
 
   await fetch(
-    `http://127.0.0.1:5000/loja/${user.data.loja.id}/produtos?page=${page}&per_page=${per_page}`,
+    `${urlBase}loja/${user.data.loja.id}/produtos?page=${page}&per_page=${per_page}`,
     {
       method: "GET",
       headers: {
@@ -155,7 +161,7 @@ async function getProducts(page = 1, per_page = qntd) {
       let html = data.products
         .map(({ foto_produto, nome_produto, preco_atual, estoque }) => {
           return `<tr>
-          <td class="campo-foto"><img class="produto-img-table" src="http://127.0.0.1:5000/produto/imagem/${foto_produto}" alt="${nome_produto}"/></td>
+          <td class="campo-foto"><img class="produto-img-table" src="${urlBase}produto/imagem/${foto_produto}" alt="${nome_produto}"/></td>
           <td>${nome_produto}</td>
           <td>${preco_atual.toLocaleString("pt-br", {
             style: "currency",
@@ -202,15 +208,12 @@ document.querySelectorAll(".produto-navegation button").forEach((btn, i) => {
 });
 function deleteProduct(id) {
   Toast.confirm("Deseja realmente excluir esse produto?", async () => {
-    await fetch(
-      `http://127.0.0.1:5000/produto/delete/${user.data.loja.id}/${id}`,
-      {
-        method: "DELETE",
-        headers: {
-          Authorization: `Bearer ${Auth.getToken()}`,
-        },
-      }
-    )
+    await fetch(`${urlBase}produto/delete/${user.data.loja.id}/${id}`, {
+      method: "DELETE",
+      headers: {
+        Authorization: `Bearer ${Auth.getToken()}`,
+      },
+    })
       .then((response) => response.json())
       .then((data) => {
         getProducts();

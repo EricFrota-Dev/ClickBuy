@@ -92,14 +92,15 @@ export default class Cart {
   }
 
   listItems(cartProducts) {
-    return cartProducts
-      .map(
-        (p) => `
+    if (cartProducts.length > 0) {
+      return cartProducts
+        .map(
+          (p) => `
         <li>
           <div class="img">
-            <img src="http://127.0.0.1:5000/produto/imagem/${
-              p.foto_produto
-            }" alt="${p.nome_produto}" />
+            <img src="${urlBase}produto/imagem/${p.foto_produto}" alt="${
+            p.nome_produto
+          }" />
           </div>
           <div class="cart-item-desc">
             <div>
@@ -117,8 +118,10 @@ export default class Cart {
             </div>
           </div>
         </li>`
-      )
-      .join(" ");
+        )
+        .join(" ");
+    }
+    return "<li><h4>Sem produtos adicionados.</h4></li>";
   }
 
   saveOnLocalStorege() {
@@ -160,7 +163,7 @@ export default class Cart {
 
     document.querySelectorAll(".modal-btn button").forEach((btn, i) => {
       btn.addEventListener("click", async () => {
-        if (i == 0) {
+        if (i == 0 && this.products.length > 0) {
           window.location.href = `${urlBase}pedido/checkout`;
         } else if (window.location.href.includes("/produto")) {
           window.history.back();

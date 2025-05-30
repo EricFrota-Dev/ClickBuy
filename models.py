@@ -130,6 +130,9 @@ class Pedido(db.Model):
     loja_id = db.Column(db.Integer, db.ForeignKey('loja.id'), nullable=False)
     data_criacao = db.Column(db.Date, default=date.today)
     endereco_id = db.Column(db.Integer, db.ForeignKey('endereco.id'), nullable=False)
+    data_entrega = db.Column(db.Date, default=date.today)
+    valor_frete = db.Column(db.Numeric(10, 2), default=0.00)
+    init_point = db.Column(db.String)
 
     user = db.relationship('User', back_populates='pedidos')
     itens = db.relationship("PedidoProduto", back_populates="pedido", cascade="all, delete-orphan")
@@ -146,17 +149,28 @@ class Pedido(db.Model):
             "status": self.status,
             "total": float(self.total),
             "endereco": self.endereco.to_dict() if self.endereco else None,
+            "data_entrega": self.data_entrega.isoformat() if self.data_entrega else None,
+            "valor_frete": float(self.valor_frete),
+            "init_point":self.init_point if self.status == "pending" else "#",
             "produtos": [
                 {
                     "id_produto": item.id_produto,
                     "nome_produto": item.produto.nome_produto,
                     "quantidade": item.quantidade,
+                    "foto_pedido" : item.produto.foto_produto,
                     "preco_unitario": float(item.produto.preco_atual),
                     "subtotal": float(item.quantidade * item.produto.preco_atual)
                 }
                 for item in self.itens
-            ],
-            "data_criacao": self.data_criacao.isoformat() if self.data_criacao else None,
+            ]
+        }
+    def to_summary_dict(self):
+        return {
+            "id": self.id,
+            "status": self.status,
+            "total": float(self.total),
+            "data_pedido": self.data_pedido.isoformat() if self.data_pedido else None,
+            "data_entrega": self.data_entrega.isoformat() if self.data_entrega else None,
         }
     
 class PedidoProduto(db.Model):

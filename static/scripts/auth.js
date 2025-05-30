@@ -1,4 +1,5 @@
 import { user } from "./userData.js";
+import { urlBase } from "./constants.js";
 
 export class Auth {
   constructor() {
@@ -13,7 +14,7 @@ export class Auth {
   async initialAuth() {
     console.log("tentou autenticar", this.token);
 
-    const response = await fetch("http://127.0.0.1:5000/auth", {
+    const response = await fetch(`${urlBase}auth`, {
       method: "POST",
       credentials: "include",
       headers: {

@@ -30,6 +30,7 @@ const freteSpan = document.querySelector("#frete");
 let frete = 0;
 let subtotal = 0;
 let total = 0;
+let data_entrega = 0;
 let isOk = false;
 
 function updateResumo() {
@@ -101,18 +102,18 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 async function calcularFrete(cep) {
   try {
-    const response = await fetch(`/pedido/frete?cep=${cep}`);
+    const response = await fetch(`${urlBase}/pedido/frete?cep=${cep}`);
     const data = await response.json();
 
     if (data.erro) {
       alert("Erro ao calcular frete: " + data.erro);
       return;
     }
-
+    console.log(data);
     frete = data.frete;
-    const prazo = data.prazo;
+    data_entrega = data.prazo;
 
-    console.log(`Frete calculado: R$ ${frete}, Prazo: ${prazo} dias`);
+    console.log(`Frete calculado: R$ ${data.frete}, Prazo: ${data.prazo} dias`);
   } catch (error) {
     console.error("Erro ao buscar frete:", error);
   }
@@ -140,6 +141,7 @@ btnComprar.addEventListener("click", async () => {
     user: {
       id: userData.id,
     },
+    frete: { data_entrega: data_entrega, valor_frete: frete },
     products: products.map(({ loja_id, id, quantidade }) => {
       return {
         id: id,
@@ -166,6 +168,7 @@ btnComprar.addEventListener("click", async () => {
     credentials: "include",
     body: JSON.stringify(pedido),
   });
+  cart.clearCartProducts();
   const data = await response.json();
   if (data.init_point) {
     window.location.href = data.init_point;

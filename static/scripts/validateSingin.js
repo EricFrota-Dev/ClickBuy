@@ -1,4 +1,6 @@
+import { urlBase } from "./constants.js";
 import { LoadingSpinner } from "./loadingSpiner.js";
+import { user } from "./userData.js";
 
 const singinForm = document.querySelector("#singinForm");
 const inputsSingin = document.querySelectorAll(".required-singin");
@@ -6,7 +8,6 @@ const singinError = document.querySelectorAll(".singin-error");
 const senhaForm = document.querySelector("#senhaForm");
 const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const completarCadastro = document.querySelector("#completarCadastro");
-
 const spinner = new LoadingSpinner(document.body);
 
 singinForm?.addEventListener("submit", async (event) => {
@@ -15,7 +16,7 @@ singinForm?.addEventListener("submit", async (event) => {
   if (emailValidade()) {
     spinner.show();
     try {
-      const response = await fetch("http://127.0.0.1:5000/signup", {
+      const response = await fetch(`${urlBase}signup`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -44,7 +45,7 @@ senhaForm?.addEventListener("submit", async (event) => {
   if (validateForm()) {
     const email = document.querySelector("#email").value;
     const senha = document.querySelector("#senha").value;
-    const response = await fetch(`http://127.0.0.1:5000/criar_senha/${email}`, {
+    const response = await fetch(`${urlBase}criar_senha/${email}`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -90,11 +91,11 @@ completarCadastro?.addEventListener("submit", async (event) => {
     },
     body: JSON.stringify(userData),
   });
-  const { user, token } = await response.json();
-  if (user && token) {
-    localStorage.setItem("token", token);
-    localStorage.setItem("user", JSON.stringify(user));
-    window.location.href = "/";
+  const data = await response.json();
+  if (data.token) {
+    document.cookie = `token=${data.token}; path=/; max-age=3600`;
+    user.setUser(data.user);
+    window.location.href = data.redirect || "/";
   } else {
     alert(data.message || "Erro no redirecionamento.");
   }

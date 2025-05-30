@@ -2,6 +2,7 @@ import { verificarAutenticacao } from "./auth.js";
 import { LoadingSpinner } from "./loadingSpiner.js";
 import { Toast } from "./toast.js";
 import { user } from "./userData.js";
+import { urlBase } from "./constants.js";
 
 const userData = user;
 
@@ -22,7 +23,7 @@ async function handleSubmit(e) {
   e.preventDefault();
   spinner.show();
 
-  const response = await fetch("http://127.0.0.1:5000/login", {
+  const response = await fetch(`${urlBase}login`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",

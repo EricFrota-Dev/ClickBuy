@@ -8,8 +8,11 @@
 <div id="overview"></div>
 
 {% endblock %} {% block extra_js %}
+<script id="orders-data" type="application/json">
+  {{ orders | tojson }}
+</script>
 <script
   type="module"
-  src="{{ url_for('static', filename='scripts/overview.js') }}"
+  src="{{ url_for('static', filename='js/pedidos.js') }}"
 ></script>
 {% endblock %}

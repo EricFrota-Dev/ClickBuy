@@ -74,4 +74,4 @@ export const lupaIcon = `<svg width="20" height="20" viewBox="0 0 800 800" fill=
 </svg>
 `;
 
-export const urlBase = "http://127.0.0.1:5000/";
+export const urlBase = "https://light-labrador-composed.ngrok-free.app/";

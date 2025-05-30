@@ -43,7 +43,7 @@ async function buscarProdutosIniciais() {
     .map(({ foto_produto, nome_produto, preco_atual, preco_original }, i) => {
       return `<li class="card-produto-oferta">
                 <div product-img>
-                    <img src="http://127.0.0.1:5000/produto/imagem/${foto_produto}"alt="${nome_produto}" />
+                    <img src="${urlBase}produto/imagem/${foto_produto}"alt="${nome_produto}" />
                 </div>
                 <div><h4>${nome_produto}</h4></div>
                 <div>
@@ -83,7 +83,7 @@ function distribuirEventos(identificador, itens) {
 
 async function buscarProdutos(filtro, params = null, page = 1, per_page = 3) {
   const produtos = await fetch(
-    `http://127.0.0.1:5000/produtos${
+    `${urlBase}produtos${
       filtro ? `/${filtro}` : ""
     }?page=${page}&per_page=${per_page}`,
     {
@@ -134,7 +134,7 @@ async function buscarProdutosFiltrados(
           );
           return `<li class="card-produto-filtro">
                 <div product-img>
-                    <img src="http://127.0.0.1:5000/produto/imagem/${foto_produto}"alt="${nome_produto}" />
+                    <img src="${urlBase}/produto/imagem/${foto_produto}"alt="${nome_produto}" />
                 </div>
                 <div><h4>${nome_produto}</h4></div>
                 <div>
