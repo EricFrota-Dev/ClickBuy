@@ -1,5 +1,6 @@
-import { deslogar } from "./index.js";
 import { Theme } from "./theme.js";
+
+const menuIcon = document.getElementById("menu-button");
 
 const theme = new Theme(document.querySelector("#theme-control"));
 theme.init();
@@ -39,10 +40,8 @@ class SideBar {
 const sideBar = new SideBar();
 
 function toggleSideBar() {
-  console.log(sideBar.isSideBarOpen);
+  menuIcon.classList.toggle("open");
   sideBar.isSideBarOpen ? sideBar.esconder() : sideBar.mostrar();
 }
 
-document
-  .querySelector(".perfil")
-  .addEventListener("click", () => toggleSideBar());
+menuIcon.addEventListener("click", () => toggleSideBar());

@@ -6,14 +6,16 @@
     <title>Sing in Page</title>
     <link
       rel="stylesheet"
-      href="{{ url_for('static', filename='styles/global.css') }}" />
+      href="{{ url_for('static', filename='styles/global.css') }}"
+    />
   </head>
   <body>
     <div class="container">
       <div class="login-header">
         <img
           src="{{ url_for('static', filename='imagens/cb-logo.svg') }}"
-          alt="" />
+          alt=""
+        />
         <span>Crie a sua conta!</span>
       </div>
       <form class="login-form" id="completarCadastro">
@@ -24,7 +26,8 @@
             id="cliente"
             name="userType"
             value="cliente"
-            checked />
+            checked
+          />
           <label for="cliente" class="toggle-option">CLIENTE</label>
 
           <input
@@ -32,7 +35,8 @@
             type="radio"
             id="loja"
             name="userType"
-            value="loja" />
+            value="loja"
+          />
           <label for="loja" class="toggle-option">LOJA</label>
         </div>
         <div class="login-form-container">
@@ -58,14 +62,11 @@
           </div>
           <button type="submit" class="singin-button">Prosseguir</button>
         </div>
-        <div class="if-not-have-accont">
-          <p>Already have an account? <a href="./login.html">Log in</a></p>
-        </div>
       </form>
     </div>
-    <script src="{{ url_for('static', filename='scripts/script.js') }}"></script>
     <script
       type="module"
-      src="{{ url_for('static', filename='scripts/validateSingin.js') }}"></script>
+      src="{{ url_for('static', filename='scripts/validateSingin.js') }}"
+    ></script>
   </body>
 </html>

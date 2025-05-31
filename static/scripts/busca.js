@@ -31,7 +31,7 @@ let proutosIniciais = [
 
 async function buscarProdutosIniciais() {
   document.querySelector("#ver_mais_ofertas").addEventListener("click", () => {
-    alert("clicou");
+    mostrarMaisOfertas();
   });
   let campo = document.querySelector("#produtos ol");
   console.log("tentou loading");
@@ -121,7 +121,12 @@ async function buscarProdutosFiltrados(
   );
   if (productsBuscados) {
     console.log(productsBuscados);
-    campo.innerHTML = `<div id="ofertas">
+    showProducts(productsBuscados);
+  }
+  spinner.hide();
+}
+function showProducts(productsBuscados) {
+  document.querySelector(".section-container").innerHTML = `<div id="ofertas">
     <div id="produtos">
     <div class="header">
       <h3>Resultados: ${productsBuscados.total}</h3>
@@ -161,35 +166,40 @@ async function buscarProdutosFiltrados(
         <button type="submit" class="hovered" id="btn-inicio">${arrow()}</button>
         <button type="submit" class="hovered" id="btn-retornar">${doubleArrow()}</button>
         <div class="pages">pagina: ${productsBuscados.current_page} de ${
-      productsBuscados.pages
-    }</div>
+    productsBuscados.pages
+  }</div>
         <button type="submit" class="rotate hovered" id="btn-avançar">${doubleArrow()}</button>
         <button type="submit" class="rotate hovered" id="btn-fim">${arrow()}</button>
       </div>
     </div>
   </div>`;
-    distribuirEventos(".card-produto-filtro", productsBuscados.products);
-    document
-      .querySelectorAll(".produto-navegation button")
-      .forEach((btn, i) => {
-        btn.addEventListener("click", () => {
-          const options = {
-            0: productsBuscados.current_page - 1,
-            1: 1,
-            2: productsBuscados.pages,
-            3: productsBuscados.current_page + 1,
-          };
-          if (productsBuscados.current_page == 1 && i == 0) {
-          } else if (
-            productsBuscados.current_page == productsBuscados.pages &&
-            (i == 2 || i == 3)
-          ) {
-            return;
-          } else {
-            buscarProdutosFiltrados(texto, ord, body, options[i], qntdPorPAge);
-          }
-        });
-      });
-  }
-  spinner.hide();
+  distribuirEventos(".card-produto-filtro", productsBuscados.products);
+  document.querySelectorAll(".produto-navegation button").forEach((btn, i) => {
+    btn.addEventListener("click", () => {
+      const options = {
+        0: productsBuscados.current_page - 1,
+        1: 1,
+        2: productsBuscados.pages,
+        3: productsBuscados.current_page + 1,
+      };
+      if (productsBuscados.current_page == 1 && i == 0) {
+      } else if (
+        productsBuscados.current_page == productsBuscados.pages &&
+        (i == 2 || i == 3)
+      ) {
+        return;
+      } else {
+        buscarProdutosFiltrados(texto, ord, body, options[i], qntdPorPAge);
+      }
+    });
+  });
+}
+async function mostrarMaisOfertas() {
+  const campo = document.querySelector(".section-container");
+  const speener = new LoadingSpinner(campo);
+  speener.show();
+  const products = await buscarProdutos("ofertas", "", 1, 8);
+  showProducts(products);
+
+  speener.hide();
 }

@@ -6,7 +6,7 @@ class DadosLogin(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     email = db.Column(db.String(64), unique=True, nullable=False)
-    senha = db.Column(db.String(128), nullable=False)
+    senha = db.Column(db.String(128))
     data_criacao = db.Column(db.Date, default=date.today)
     ultimo_login = db.Column(db.Date)
 

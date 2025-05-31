@@ -1,11 +1,11 @@
 import { verificarAutenticacao } from "./auth.js";
 import { LoadingSpinner } from "./loadingSpiner.js";
-import { Toast } from "./toast.js";
 import { user } from "./userData.js";
 import { urlBase } from "./constants.js";
 
 const userData = user;
-
+const a = document.querySelector("#google-login");
+a.setAttribute("href", `${urlBase}login/google`);
 const spinner = new LoadingSpinner(document.body);
 
 async function estaLogado() {
@@ -33,13 +33,16 @@ async function handleSubmit(e) {
       senha: document.querySelector("#senha").value,
     }),
   });
-  const { token, user, redirect } = await response.json();
-  if (token && user) {
-    document.cookie = `token=${token}; path=/; max-age=3600`;
-    userData.setUser(user);
-    window.location.href = redirect;
+  const result = await response.json();
+  if (response.ok && result.token && result.user) {
+    userData.setUser(result.user);
+    window.location.href = result.redirect || "/";
   } else {
-    Toast.sentToast(data.message, "fail");
+    document.querySelector(
+      `${
+        result.message.includes("Usuário") ? ".email-error" : ".password-error"
+      }`
+    ).textContent = result.message;
   }
   spinner.hide();
 }

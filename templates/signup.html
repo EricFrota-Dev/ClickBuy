@@ -3,37 +3,42 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Sing in Page</title>
+    <title>Cadastrar-se</title>
     <link
       rel="stylesheet"
-      href="{{ url_for('static', filename='styles/global.css') }}" />
+      href="{{ url_for('static', filename='styles/global.css') }}"
+    />
   </head>
   <body>
     <div class="container">
       <div class="login-header">
         <img
           src="{{ url_for('static', filename='imagens/cb-icon.svg') }}"
-          alt="" />
+          alt=""
+        />
         <span>Crie a sua conta!</span>
       </div>
       <form class="login-form" id="singinForm">
         <div class="login-form-container">
           <div class="form-item">
-            <label for="email">Enter email</label>
+            <label for="email">E-mail</label>
             <input type="text" id="email" class="required-singin" />
-            <div class="singin-error email-error hide">Enter a valid email</div>
-            <div class="dinamic-error email-error hide"></div>
+            <div class="singin-error email-error hide">
+              Digite um e-mail válido
+            </div>
+            <div class="dinamic-error"></div>
           </div>
           <button type="submit" class="singin-button">Prosseguir</button>
         </div>
         <div class="if-not-have-accont">
-          <p>Already have an account? <a href="/login.html">Log in</a></p>
+          <p>Já possui uma conta? <a href="./login">Entre</a></p>
         </div>
       </form>
     </div>
     <script
       type="module"
-      src="{{ url_for('static', filename='scripts/validateSingin.js') }}"></script>
+      src="{{ url_for('static', filename='scripts/validateSingin.js') }}"
+    ></script>
     <!-- <script
       type="module"
       src="{{ url_for('static', filename='scripts/index.js') }}"></script> -->

@@ -1,9 +1,5 @@
 export const itensDeNavegacao = [
   {
-    titulo: "carrinho",
-    url: "/",
-  },
-  {
     titulo: "suporte",
     url: "/",
   },
@@ -12,7 +8,7 @@ export const itensDeNavegacao = [
 export const itensDeNavegacaoUser = [
   {
     titulo: "minhas compras",
-    url: "/",
+    url: `/pedidos`,
   },
   {
     titulo: "configurações",

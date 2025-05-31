@@ -1,18 +1,18 @@
 import { user } from "./userData.js";
-import { urlBase } from "./constants.js";
+import {
+  urlBase,
+  itensDeNavegacaoLoja,
+  itensDeNavegacaoUser,
+} from "./constants.js";
 
 export class Auth {
   constructor() {
-    this.token = Auth.getToken();
     this.estaAutenticado = false;
-
-    if (this.token) {
-      this.initialAuth();
-    }
+    this.initialAuth();
   }
 
   async initialAuth() {
-    console.log("tentou autenticar", this.token);
+    console.log("tentou autenticar");
 
     const response = await fetch(`${urlBase}auth`, {
       method: "POST",
@@ -35,11 +35,6 @@ export class Auth {
       return false;
     }
   }
-
-  static getToken() {
-    const match = document.cookie.match(/(?:^|;\s*)token=([^;]*)/);
-    return match ? match[1] : null;
-  }
 }
 
 const btnEntrar = document.querySelector(".btn_entrar");
@@ -50,9 +45,49 @@ export async function verificarAutenticacao() {
 
   if (estaAutenticado) {
     btnEntrar?.classList.add("hide");
+    console.log(user.data);
+    distribuirItensDeNavegacao();
     return true;
   } else {
     btnEntrar?.classList.remove("hide");
     return false;
   }
+}
+function distribuirItensDeNavegacao() {
+  const sideBar = document.querySelector("#sidebar_nav");
+  const userName = document.querySelector("#user_name");
+  if (user.data) {
+    userName.innerHTML = `<h3 class="user_title">olá,&nbsp;<span>${user.data.nome}</span></h3>`;
+    if (user.data.role === "loja") {
+      sideBar.innerHTML += itensDeNavegacaoLoja(user.data.loja.id)
+        .map((item) => {
+          return `<li class=${item.titulo}><a href="${item.url}" >${item.titulo}</a></li>`;
+        })
+        .join("");
+    }
+    sideBar.innerHTML += itensDeNavegacaoUser
+      .map((item) => {
+        return `<li class=${item.titulo}><a href="${item.url}">${item.titulo}</a></li>`;
+      })
+      .join("");
+  } else {
+    userName.innerHTML = "";
+  }
+  document.querySelector(".sair")?.addEventListener("click", () => {
+    deslogar();
+  });
+}
+async function deslogar() {
+  await fetch(`${urlBase}logout`, {
+    method: "POST",
+    credentials: "include",
+  })
+    .then((res) => res.json())
+    .then((data) => {
+      Toast.sentToast(`${data.message}`, "success");
+    })
+    .catch((err) => console.error(err));
+  distribuirItensDeNavegacao();
+  user.clear();
+  window.location.href = "/";
 }

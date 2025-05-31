@@ -5,7 +5,7 @@ from auth.token import token_required
 from constants import categorias
 from extensions import db
 import os
-from models import Loja, Produto
+from models import Loja, Produto, User
 from werkzeug.utils import secure_filename
 
 class ProdutoController:
@@ -62,7 +62,9 @@ class ProdutoController:
     def register(current_user, loja_id):
         try:
             loja = Loja.query.get_or_404(loja_id)
-            if current_user != loja.user_id:
+            user = User.query.filter_by(login_id = current_user).first()
+            if user.id != loja.user_id:
+                
                 return jsonify(message="Você não tem permissão para adicionar produtos nesta loja!"), 403
 
             foto = request.files.get('foto_produto')
@@ -95,7 +97,8 @@ class ProdutoController:
     def update(current_user, loja_id, id):
         try:
             loja = Loja.query.get_or_404(loja_id)
-            if current_user != loja.user_id:
+            user = User.query.filter_by(login_id = current_user).first()
+            if user.id != loja.user_id:
                 return jsonify(message="Você não tem permissão para atualizar produtos nesta loja!"), 403
 
             produto = Produto.query.get_or_404(id)
@@ -127,12 +130,17 @@ class ProdutoController:
     def delete(current_user, loja_id, id):
         try:
             loja = Loja.query.get_or_404(loja_id)
-            if current_user != loja.user_id:
+            user = User.query.filter_by(login_id = current_user).first()
+            if user.id != loja.user_id:
                 return jsonify(message="Você não tem permissão para deletar produtos nesta loja!"), 403
 
             produto = Produto.query.get_or_404(id)
             if produto.loja_id != loja_id:
                 return jsonify(message="Este produto não pertence a esta loja."), 403
+            if produto.foto_produto:
+                imagem_path = os.path.join(current_app.config['UPLOAD_FOLDER'], produto.foto_produto)
+                if os.path.exists(imagem_path):
+                    os.remove(imagem_path)
 
             db.session.delete(produto)
             db.session.commit()

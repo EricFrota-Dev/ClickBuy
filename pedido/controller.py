@@ -13,9 +13,9 @@ class PrdidoController:
 
     @token_required
     def getPedidosByUser(current_user):
-        user = User.query.filter_by(id=current_user).first()
+        user = User.query.filter_by(login_id=current_user).first()
         if not user:
-            return redirect(url_for("auth.html"))
+            return redirect(url_for("auth.login"))
 
         pedidos = Pedido.query.filter_by(user_id=user.id).all()
         orders = [pedido.to_summary_dict() for pedido in pedidos]
@@ -190,7 +190,7 @@ class PrdidoController:
             frete = 17.00
             prazo = 3
         else:  # Demais regiões
-            frete = 0
+            frete = 1
             prazo = 5
 
         return jsonify({
@@ -205,11 +205,5 @@ class PrdidoController:
     
     @token_required
     def overview(current_user,pedido_id):
-        return render_template("overview.html")
-    def error():
-        return render_template("error.html")
-    
-    @token_required
-    def resume(current_user, pedido_id):
         pedido = Pedido.query.filter_by(id = pedido_id).first()
-        return jsonify({"order":pedido.to_dict()})
+        return render_template("overview.html",order=pedido.to_dict())

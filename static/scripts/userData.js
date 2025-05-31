@@ -5,7 +5,6 @@ class userData {
   setUser(data) {
     localStorage.setItem("user", JSON.stringify(data));
     this.data = data;
-    console.log(this.data);
   }
   clear() {
     localStorage.removeItem("user");

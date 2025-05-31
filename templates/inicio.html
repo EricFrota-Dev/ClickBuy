@@ -1,7 +1,8 @@
 {% block extra_css %}
 <link
   rel="stylesheet"
-  href="{{ url_for('static', filename='styles/inicio.css') }}" />
+  href="{{ url_for('static', filename='styles/inicio.css') }}"
+/>
 {% endblock %} {% extends 'index.html' %} {% block busca %}
 <div id="busca">
   <form id="busca-form">
@@ -9,14 +10,16 @@
       <input id="texto-busca" type="text" placeholder="Buscar produto" />
       <button id="busca-btn" type="submit">busca</button>
     </div>
-    <div class="ordenar-campo">
+    <div class="categorias">
       <label for="categorias">Ordenar:</label>
-      <select id="ordenar" nome="ordenar" value="ordenar">
-        <option value="Recentes" selected>Recentes</option>
-        <option value="Mais Barato">Mais Barato</option>
-        <option value="Mais Caro">Mais Caro</option>
-        <option value="Ofertas">Ofertas</option>
-      </select>
+      <div class="ordenar-campo">
+        <select id="ordenar" nome="ordenar" value="ordenar">
+          <option value="Recentes" selected>Recentes</option>
+          <option value="Mais Barato">Mais Barato</option>
+          <option value="Mais Caro">Mais Caro</option>
+          <option value="Ofertas">Ofertas</option>
+        </select>
+      </div>
     </div>
   </form>
 </div>
@@ -25,8 +28,10 @@
 {% endblock %} {% block extra_js %}
 <script
   type="module"
-  src="{{ url_for('static', filename='scripts/inicio.js') }}"></script>
+  src="{{ url_for('static', filename='scripts/inicio.js') }}"
+></script>
 <script
   type="module"
-  src="{{ url_for('static', filename='scripts/busca.js') }}"></script>
+  src="{{ url_for('static', filename='scripts/busca.js') }}"
+></script>
 {% endblock %}

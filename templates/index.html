@@ -47,11 +47,40 @@
         <ul class="nav"></ul>
       </div>
       <div class="perfil_container">
-        <button class="btn_entrar btn_padrao">Entrar</button>
-        <button class="btn_sair hide btn_padrao">Sair</button>
+        <button class="btn_entrar hide btn_padrao">Entrar</button>
         <button id="cart" class="btn_cart btn_padrao">Cart</button>
         <div id="theme-control" class="theme-toggle-container btn_padrao"></div>
-        <button class="perfil"></button>
+        <button id="menu-button" class="menu-icon btn_padrao">
+          <svg
+            width="30"
+            height="30"
+            viewBox="0 0 30 30"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              class="line top"
+              d="M5 7 H25"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+            />
+            <path
+              class="line middle"
+              d="M5 15 H25"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+            />
+            <path
+              class="line bottom"
+              d="M5 23 H25"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+            />
+          </svg>
+        </button>
         <aside class="hide">
           <div class="aside_header">
             <div id="user_name"></div>
@@ -65,9 +94,34 @@
     {% block busca %}{% endblock %}
     <main>{% block content %} {% endblock %}</main>
     <div id="modal"></div>
-    <footer>
-      <div>redes sociais</div>
-      <p>&copy; 2025 ClickBuy - Todos os direitos reservados</p>
+    <footer class="footer">
+      <div class="footer-content">
+        <div class="footer-column">
+          <h4>ClickBuy</h4>
+          <p>Av. Paulista, 1000 - São Paulo, SP<br />CEP 01310-100</p>
+          <p>CNPJ: 12.345.678/0001-99</p>
+        </div>
+        <div class="footer-column">
+          <h4>Institucional</h4>
+          <ul>
+            <li><a href="#">Sobre nós</a></li>
+            <li><a href="#">Política de Privacidade</a></li>
+            <li><a href="#">Termos de Uso</a></li>
+            <li><a href="#">Contato</a></li>
+          </ul>
+        </div>
+        <div class="footer-column">
+          <h4>Redes Sociais</h4>
+          <ul>
+            <li><a href="#">Instagram</a></li>
+            <li><a href="#">Facebook</a></li>
+            <li><a href="#">LinkedIn</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; 2025 ClickBuy. Todos os direitos reservados.</p>
+      </div>
     </footer>
     {% block extra_js %}{% endblock %}
   </body>

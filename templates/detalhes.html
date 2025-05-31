@@ -3,7 +3,7 @@
   rel="stylesheet"
   href="{{ url_for('static', filename='styles/detalhes.css') }}"
 />
-{% endblock %} {% block content %}
+{% endblock %} {% block content %}<!-- 
 <div class="detalhe-container">
   <div class="produto-detalhes">
     <div class="conteudo-principal">
@@ -26,9 +26,39 @@
     <p class="descricao">{{produto.descricao_produto}}</p>
   </div>
   <div id="detalhes" class="hide">{{produto | tojson}}</div>
+</div> -->
+
+<div class="container">
+  <div class="product-image">
+    <img
+      src="https://light-labrador-composed.ngrok-free.app/produto/imagem/{{produto.foto_produto}}"
+      alt="{{nome_produto}}"
+    />
+  </div>
+  <div class="product-details">
+    <h1 class="product-title">{{produto.nome_produto}}</h1>
+    <p class="product-category">
+      Categoria: <strong>{{produto.categoria}}</strong>
+    </p>
+    <p class="product-description">{{produto.descricao_produto}}</p>
+    <p class="product-stock">
+      Estoque disponível: <strong>{{produto.estoque}} unidades</strong>
+    </p>
+
+    <div class="product-price">
+      <span class="original-price">R$ {{produto.preco_original}}</span>
+      <span class="current-price">R$ {{produto.preco_atual}}</span>
+      <span class="discount">{{produto.desconto}}% off</span>
+    </div>
+
+    <button class="buy-button">Adicionar ao Carrinho</button>
+  </div>
 </div>
 
 {% endblock %} {% block extra_js %}
+<script id="product-data" type="application/json">
+  {{ produto | tojson }}
+</script>
 <script
   type="module"
   src="{{ url_for('static', filename='scripts/detalhes.js') }}"

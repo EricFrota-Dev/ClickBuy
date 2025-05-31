@@ -48,12 +48,21 @@
   position: relative;
 }
 
+.categorias {
+  display: flex;
+  align-items: center;
+  margin-left: 20px;
+}
+
 #busca-form select {
+  color: var(--color-text);
   height: 36px;
   max-width: 140px;
   border-radius: 5px;
   border: 1px solid var(--color-border);
   transition: 0.3s all;
+  background-color: var(--color-background);
+  cursor: pointer;
 }
 #busca-form input,
 select:hover {
@@ -106,10 +115,6 @@ h2 {
   top: 7.8;
   left: 5;
   font-size: small;
-}
-#ordenar {
-  padding-left: 60px;
-  cursor: pointer;
 }
 #busca-btn {
   position: absolute;

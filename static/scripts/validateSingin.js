@@ -26,9 +26,9 @@ singinForm?.addEventListener("submit", async (event) => {
         }),
       });
       const data = await response.json();
-      console.log(document.querySelector("#email").value);
-      console.log(data.msg, data.redirect);
-      window.location.href = data.redirect;
+      errorDiv.textContent = data.message;
+      errorDiv.style.display = "block";
+      if (data.redirect) window.location.href = data.redirect;
     } catch (error) {
       console.log(error);
       errorDiv.textContent = data.message || "Erro desconhecido.";
@@ -92,8 +92,7 @@ completarCadastro?.addEventListener("submit", async (event) => {
     body: JSON.stringify(userData),
   });
   const data = await response.json();
-  if (data.token) {
-    document.cookie = `token=${data.token}; path=/; max-age=3600`;
+  if (data.user) {
     user.setUser(data.user);
     window.location.href = data.redirect || "/";
   } else {

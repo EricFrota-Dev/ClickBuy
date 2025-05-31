@@ -5,7 +5,6 @@ import {
   editIcon,
   arrow,
 } from "./constants.js";
-import { Auth } from "./auth.js";
 import { user } from "./userData.js";
 import { LoadingSpinner } from "./loadingSpiner.js";
 import { Toast } from "./toast.js";
@@ -85,9 +84,7 @@ document
       }`,
       {
         method: tipoCadastro,
-        headers: {
-          Authorization: `Bearer ${Auth.getToken()}`,
-        },
+        credentials: "include",
         body: formData,
       }
     )
@@ -144,10 +141,7 @@ async function getProducts(page = 1, per_page = qntd) {
     `${urlBase}loja/${user.data.loja.id}/produtos?page=${page}&per_page=${per_page}`,
     {
       method: "GET",
-      headers: {
-        Authorization: `Bearer ${Auth.getToken()}`,
-        // Não coloca "Content-Type", o navegador define automaticamente com boundary
-      },
+      credentials: "include",
     }
   )
     .then((response) => response.json())
@@ -210,9 +204,7 @@ function deleteProduct(id) {
   Toast.confirm("Deseja realmente excluir esse produto?", async () => {
     await fetch(`${urlBase}produto/delete/${user.data.loja.id}/${id}`, {
       method: "DELETE",
-      headers: {
-        Authorization: `Bearer ${Auth.getToken()}`,
-      },
+      credentials: "include",
     })
       .then((response) => response.json())
       .then((data) => {

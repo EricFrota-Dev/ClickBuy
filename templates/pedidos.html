@@ -1,11 +1,11 @@
 {% extends 'index.html' %} {% block extra_css %}
 <link
   rel="stylesheet"
-  href="{{ url_for('static', filename='styles/overview.css') }}"
+  href="{{ url_for('static', filename='styles/pedidos.css') }}"
 />
 {% endblock %} {% block content %}
 
-<div id="overview"></div>
+<div id="pedidos"></div>
 
 {% endblock %} {% block extra_js %}
 <script id="orders-data" type="application/json">
@@ -13,6 +13,6 @@
 </script>
 <script
   type="module"
-  src="{{ url_for('static', filename='js/pedidos.js') }}"
+  src="{{ url_for('static', filename='scripts/pedidos.js') }}"
 ></script>
 {% endblock %}

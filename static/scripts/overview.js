@@ -2,35 +2,9 @@ import { urlBase } from "./constants.js";
 import { LoadingSpinner } from "./loadingSpiner.js";
 
 const container = document.querySelector("#overview");
-let order = {};
-
-const getOrder = async () => {
-  const loadingSpiner = new LoadingSpinner(container);
-  loadingSpiner.show();
-  try {
-    const pathParts = window.location.pathname.split("/").filter(Boolean);
-    const pedido_id = pathParts[pathParts.length - 1];
-
-    const res = await fetch(`${urlBase}/pedido/resume/${pedido_id}`, {
-      credentials: "include",
-    });
-
-    if (!res.ok) throw new Error("Erro ao buscar pedido");
-
-    const data = await res.json();
-    if (data) {
-      order = data.order;
-      console.log(order);
-      container.innerHTML = showOrder(order);
-    }
-  } catch (error) {
-    console.error("Erro ao buscar pedido:", error);
-  }
-  loadingSpiner.hide();
-};
-getOrder();
-
-const showOrder = (pedido) => {
+const pedido = JSON.parse(document.querySelector("#orders-data").textContent);
+console.log(pedido);
+const showOrder = () => {
   return `
     <div class="order-card">
       <div class="order-header">
@@ -85,3 +59,4 @@ const showOrder = (pedido) => {
     </div>
   `;
 };
+container.innerHTML = showOrder();

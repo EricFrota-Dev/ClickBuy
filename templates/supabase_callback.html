@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Processando login...</title>
+  </head>
+  <body>
+    <p>Autenticando com o Google...</p>
+    <script>
+      // Extrai o access_token da URL
+      const fragment = window.location.hash.substring(1);
+      const params = new URLSearchParams(fragment);
+      const token = params.get("access_token");
+
+      if (token) {
+        // Envia para o backend via POST
+        fetch("/auth/handle_google_token", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ token }),
+        })
+          .then((res) => res.json())
+          .then((data) => {
+            if (data.redirect) {
+              window.location.href = data.redirect;
+            } else {
+              alert("Erro ao autenticar.");
+            }
+          });
+      } else {
+        document.body.innerHTML = "<p>Token não encontrado.</p>";
+      }
+    </script>
+  </body>
+</html>

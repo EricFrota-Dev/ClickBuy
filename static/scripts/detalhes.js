@@ -1,7 +1,9 @@
 import { cart } from "./index.js";
 import { Toast } from "./toast.js";
 
-const detalhes = JSON.parse(document.querySelector("#detalhes").innerHTML);
+const detalhes = JSON.parse(
+  document.querySelector("#product-data").textContent
+);
 console.log(detalhes);
 
 const comprarBtn = document.querySelector("#btn-comprar");
