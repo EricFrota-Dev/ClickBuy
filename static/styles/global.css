@@ -64,6 +64,7 @@ main {
   height: auto;
 }
 footer {
+  margin-top: 40px;
   width: 100%;
   background-color: var(--color-darker);
   color: var(--color-font);
@@ -270,14 +271,14 @@ input[type="checkbox"] {
 
 .login-form-footer a {
   gap: 5px;
-  border: 1px solid #ccc;
+  border: 1px solid var(--color-border);
   border-radius: 100px;
   height: 55px;
   justify-content: center;
   display: flex;
   padding: 0.6rem;
   align-items: center;
-  color: black;
+  color: var(--color-font) !important;
   text-decoration: none;
   width: 100%;
 }
@@ -291,6 +292,9 @@ input[type="checkbox"] {
   justify-content: space-between;
   gap: 5px;
   margin-bottom: 30px;
+}
+.login-form a {
+  color: var(--color-primary);
 }
 
 .if-not-have-accont {
@@ -401,6 +405,18 @@ textarea {
 #cart {
   width: 40px;
   height: 40px;
+  position: relative;
+}
+.cart-count {
+  font-weight: bold;
+  color: white;
+  position: absolute;
+  right: -5px;
+  top: -5px;
+  border-radius: 50%;
+  height: 20px;
+  width: 20px;
+  background-color: var(--color-error);
 }
 .btn_entrar,
 .btn_sair {
@@ -451,12 +467,16 @@ textarea {
   height: 100vh;
   right: 0;
   left: 0;
-  background-color: rgba(0, 0, 0, 0.192);
+  background-color: rgba(0, 0, 0, 0.3);
   display: flex;
   justify-content: center;
   align-items: center;
 }
-
+.blur-background {
+  filter: blur(5px);
+  pointer-events: none;
+  user-select: none;
+}
 .modal-carrinho {
   background-color: var(--color-background);
   border-radius: 20px;
@@ -465,6 +485,7 @@ textarea {
   max-width: 500px;
   max-height: 60%;
   padding: 20px;
+  z-index: 100;
 }
 .modal-container {
   max-height: 445px;
@@ -472,8 +493,10 @@ textarea {
   overflow-x: hidden;
   scrollbar-gutter: stable both-edges;
   box-sizing: border-box;
+
   padding-bottom: 10px;
 }
+
 .itens-carrinho {
   margin: 0;
   padding: 0;
@@ -582,4 +605,18 @@ input[type="number"]::-webkit-outer-spin-button {
   display: flex;
   justify-content: space-around;
   margin-top: 20px;
+}
+small {
+  margin-bottom: 0.5em;
+  font-size: 0.6em;
+  vertical-align: top;
+}
+.value {
+  font-weight: 500;
+}
+.modal-bg {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  z-index: 1;
 }

@@ -34,7 +34,7 @@ async function handleSubmit(e) {
     }),
   });
   const result = await response.json();
-  if (response.ok && result.token && result.user) {
+  if (response.ok && result.user) {
     userData.setUser(result.user);
     window.location.href = result.redirect || "/";
   } else {

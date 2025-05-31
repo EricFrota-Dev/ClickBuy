@@ -16,7 +16,8 @@ sideBar.innerHTML += itensDeNavegacao
     return `<li class=${item.titulo}><a href="${item.url}">${item.titulo}</a></li>`;
   })
   .join("");
-
+export const cart = new Cart();
+cart.init();
 window.addEventListener("DOMContentLoaded", () => {
   const toastData = localStorage.getItem("toastMessage");
   if (toastData) {
@@ -25,8 +26,7 @@ window.addEventListener("DOMContentLoaded", () => {
     localStorage.removeItem("toastMessage");
   }
 });
-export const cart = new Cart();
-cart.init();
+
 verificarAutenticacao();
 
 export function showLoading() {
@@ -36,3 +36,6 @@ export function showLoading() {
 export function hideLoading() {
   document.getElementById("loadingSpinner").classList.add("hide");
 }
+window.addEventListener("pageshow", () => {
+  cart.renderCart();
+});

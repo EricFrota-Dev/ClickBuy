@@ -69,14 +69,16 @@ class AuthController:
                 )
                 db.session.add(loja)
                 userData["loja"] = loja.to_dict()
-
+            token = generate_token(user.id)
             db.session.commit()
             next_page = session.pop("next", None)
             response_data = {
                 "user": userData,
                 "redirect": next_page or "/"
             }
-            return jsonify(response_data)
+            response = jsonify(response_data)
+            response.set_cookie("token", token, httponly=True, samesite="Lax")
+            return response
         
         return render_template("completar_cadastro.html", email=login.email)
 
@@ -110,7 +112,7 @@ class AuthController:
             }
             response = jsonify(response_data)
             response.set_cookie("token", token, httponly=True, samesite="Lax")
-            return jsonify(response)
+            return response
 
         return render_template("login.html")
     

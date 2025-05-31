@@ -71,3 +71,11 @@ export const lupaIcon = `<svg width="20" height="20" viewBox="0 0 800 800" fill=
 `;
 
 export const urlBase = "https://light-labrador-composed.ngrok-free.app/";
+
+export function formatarValor(valor) {
+  const [inteira, decimal] = valor.toFixed(2).split(".");
+
+  const parteInteiraFormatada = inteira.replace(/\B(?=(\d{3})+(?!\d))/g, " ");
+
+  return `<span class="value">${parteInteiraFormatada}</span><small class="value">${decimal}</small>`;
+}

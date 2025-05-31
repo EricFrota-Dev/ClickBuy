@@ -9,14 +9,16 @@ export default class Cart {
   constructor() {
     this.iconElement = document.querySelector("#cart");
     this.modalElement = document.querySelector("#modal");
-    this.count = this.changeCount();
+    this.count = "";
     this.products = this.getProductsInCart();
     this.showIcon();
     this.isOpen = false;
+    this.updateCount();
   }
 
   showIcon() {
-    this.iconElement.innerHTML = cartIcon;
+    this.iconElement.innerHTML = `${cartIcon}<span  class="cart-count hide">0</span>`;
+    this.count = document.querySelector(".cart-count");
   }
 
   subscribe(callback) {
@@ -27,10 +29,6 @@ export default class Cart {
     // Garante que não ocorra loop de chamadas recursivas indesejadas
     const productsCopy = JSON.parse(JSON.stringify(this.products));
     this.subscribers.forEach((cb) => cb(productsCopy));
-  }
-
-  changeCount() {
-    return 0;
   }
 
   click() {
@@ -56,16 +54,23 @@ export default class Cart {
           produto.nome_produto || "Um produto"
         } adicionado ao carrinho com sucesso!`
       );
+      document.querySelector(".cart-count").classList.remove("hide");
     }
 
     this.saveOnLocalStorege();
     this.renderCart();
-    this.toggleCart();
   }
 
   toggleCart() {
     this.isOpen = !this.isOpen;
     this.modalElement.classList.toggle("hide");
+
+    const pageContent = document.querySelector("main") || document.body;
+    if (this.isOpen) {
+      pageContent.classList.add("blur-background");
+    } else {
+      pageContent.classList.remove("blur-background");
+    }
   }
 
   clearCartProducts() {
@@ -107,7 +112,7 @@ export default class Cart {
               <p>${p.nome_produto}</p>
             </div>
             <div>
-              <strong>${(p.preco_atual * p.quantidade).toLocaleString("pt-br", {
+              <strong>${p.preco_atual.toLocaleString("pt-br", {
                 style: "currency",
                 currency: "BRL",
               })}</strong>
@@ -128,12 +133,22 @@ export default class Cart {
     localStorage.setItem(this.STOREGEKEY, JSON.stringify(this.products));
   }
 
+  updateCount() {
+    const countItens = this.products.length;
+    console.log(countItens);
+    if (countItens > 0) {
+      this.count.classList.remove("hide");
+      this.count.innerHTML = countItens;
+    } else {
+      this.count.classList.add("hide");
+    }
+  }
   renderCart() {
     this.products = this.getProductsInCart();
     this.modalElement.innerHTML = this.modal(this.products);
     this.modalElement
       .querySelector(".modal-bg")
-      ?.addEventListener("click", () => this.toggleCart());
+      .addEventListener("click", () => this.toggleCart());
 
     this.modalElement.querySelectorAll("ol li").forEach((item, i) => {
       const btns = item.querySelectorAll("button");
@@ -174,6 +189,7 @@ export default class Cart {
     });
 
     this.notify();
+    this.updateCount();
   }
 
   renderCartItems(containerElement) {
@@ -215,10 +231,12 @@ export default class Cart {
 
   async init() {
     this.modalElement.classList.add("hide");
+
     this.iconElement.addEventListener("click", () => {
       this.renderCart();
       this.toggleCart();
     });
     this.renderCart();
+    this.updateCount();
   }
 }

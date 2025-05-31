@@ -39,6 +39,10 @@
   cursor: pointer;
 }
 
+.toast-confirm {
+  background-color: var(--color-background) !important;
+}
+
 .toast-success {
   background-color: var(--color-success) !important;
 }

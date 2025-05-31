@@ -48,24 +48,31 @@
   );
 } */
 
-body {
-  background-color: var(--color-background);
-  color: var(--color-font);
+p {
+  margin: 0;
 }
 
-.container {
-  max-width: 1200px;
-  margin: 40px auto;
-  padding: 20px;
-  display: flex;
-  gap: 40px;
-  background-color: var(--color-background-secunario);
+.details-wraper {
+  background-color: var(--color-background);
   border-radius: var(--radius-pattern);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  padding: 20px;
+}
+
+.details-container {
+  max-width: 1200px;
+  border-bottom: 1px solid var(--color-border);
+  display: flex;
+  gap: 40px;
+  padding-bottom: 30px;
 }
 
 .product-image {
   flex: 1;
+  border-radius: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .product-image img {
@@ -75,10 +82,13 @@ body {
 }
 
 .product-details {
-  flex: 2;
+  flex: 1;
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  border: 1px solid var(--color-border);
+  border-radius: 10px;
+  padding: 20px;
+  justify-content: space-around;
 }
 
 .product-title {
@@ -89,55 +99,97 @@ body {
 .product-description {
   line-height: 1.6;
   font-size: 1rem;
+  margin-top: 20px;
 }
 
 .product-category,
 .product-stock {
   font-size: 0.9rem;
-  color: #666;
+  color: var(--color-text);
 }
 
 .product-price {
   display: flex;
-  align-items: center;
-  gap: 10px;
+  flex-direction: column;
 }
 
 .original-price {
-  text-decoration: line-through;
-  color: #999;
+  color: var(--color-border);
   font-size: 1.1rem;
+  display: flex;
+  align-items: center;
 }
 
 .current-price {
-  font-size: 1.5rem;
-  font-weight: bold;
+  font-size: 2rem;
   color: var(--color-primary);
+  display: flex;
+  align-items: center;
+  gap: 4px;
 }
 
 .discount {
   color: var(--color-success);
-  font-weight: bold;
   font-size: 0.95rem;
 }
 
 .buy-button {
-  padding: 15px;
+  position: relative;
+  overflow: hidden;
   border: none;
-  background-color: var(--color-primary);
-  color: white;
-  font-size: 1rem;
-  border-radius: var(--radius-pattern);
   cursor: pointer;
-  transition: background 0.3s ease;
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  background: none;
+  color: white;
+  font-weight: bold;
+  transition: all 0.6s ease;
 }
 
+.btn-background {
+  position: absolute;
+  inset: 0;
+  background-image: linear-gradient(
+    45deg,
+    var(--color-secondary),
+    var(--color-primary)
+  );
+  z-index: 0;
+  pointer-events: none;
+  transition: opacity 0.4s ease;
+}
+
+.btn-background::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: linear-gradient(
+    315deg,
+    var(--color-secondary),
+    var(--color-primary)
+  );
+  opacity: 0;
+  transition: opacity 0.6s ease;
+}
+
+/* Hover state: mostra o ::after com suavidade */
+.buy-button:hover .btn-background::after {
+  opacity: 1;
+}
 .buy-button:hover {
-  background-color: #1f47cc;
+  scale: 103%;
 }
 
-@media (max-width: 768px) {
-  .container {
-    flex-direction: column;
-  }
+/* Garante que o conteúdo fique visível acima dos backgrounds */
+.buy-button p {
+  position: relative;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center; /* Centraliza horizontalmente */
+  gap: 0.5rem;
+  font-size: 1.3rem;
+}
+.parcels {
+  display: flex;
 }

@@ -76,11 +76,11 @@ select:hover {
   gap: 16px;
   margin: 20;
   padding: 0;
-  overflow: hidden;
   justify-content: space-around;
   gap: 5%;
 }
 #produtos li {
+  overflow: hidden;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -91,6 +91,7 @@ select:hover {
   border-radius: 20px;
   cursor: pointer;
   transition: 0.3s all;
+  position: relative;
 }
 #produtos li:hover {
   scale: 102%;
@@ -106,6 +107,18 @@ h2 {
   max-height: 60px;
   overflow: hidden;
 }
+.estiqueta-desconto {
+  background-color: var(--color-success);
+  color: white;
+  font-weight: bold;
+  position: absolute;
+  top: -10px;
+  left: -40px;
+  transform: rotate(330deg);
+  padding: 20px 40px 2px 40px;
+  font-size: 0.7em;
+}
+
 .ordenar-campo {
   position: relative;
   margin-left: 10px;
@@ -126,7 +139,7 @@ h2 {
   color: var(--color-primary);
 }
 .desconto {
-  color: var(--color-success);
+  color: var(--color-border);
 }
 p span {
   font-size: small;
@@ -137,4 +150,7 @@ h4 {
   max-height: 50px;
   overflow: hidden;
   margin: 0;
+}
+.price-field {
+  width: 100%;
 }

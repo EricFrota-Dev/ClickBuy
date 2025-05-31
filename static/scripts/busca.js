@@ -1,11 +1,13 @@
 import { lupaIcon, urlBase } from "./constants.js";
-import { doubleArrow, arrow } from "./constants.js";
+import { doubleArrow, arrow, formatarValor } from "./constants.js";
 import { LoadingSpinner } from "./loadingSpiner.js";
 
 const buscaBtn = document.querySelector("#busca-btn");
 buscaBtn.innerHTML = lupaIcon;
 
-document.querySelector(".section-container").innerHTML = `<div id="ofertas">
+// estrutura inicial da página
+function montarEstruturaInicial() {
+  document.querySelector(".section-container").innerHTML = `<div id="ofertas">
     <div class="header">
       <h2>Ofertas</h2>
       <button id="ver_mais_ofertas" class="btn_padrao">Ver Mais</button>
@@ -14,13 +16,16 @@ document.querySelector(".section-container").innerHTML = `<div id="ofertas">
       <ol></ol>
     </div>
   </div>`;
+}
+
+montarEstruturaInicial();
 
 document.querySelector("#busca-form").addEventListener("submit", (e) => {
   e.preventDefault();
   buscarProdutosFiltrados();
 });
 
-let proutosIniciais = [
+let produtosIniciais = [
   {
     total: null,
     pages: null,
@@ -33,86 +38,91 @@ async function buscarProdutosIniciais() {
   document.querySelector("#ver_mais_ofertas").addEventListener("click", () => {
     mostrarMaisOfertas();
   });
+
   let campo = document.querySelector("#produtos ol");
-  console.log("tentou loading");
   let spinner = new LoadingSpinner(campo);
   spinner.show();
-  proutosIniciais[0] = await buscarProdutos("ofertas");
-  console.log(proutosIniciais);
-  campo.innerHTML = proutosIniciais[0].products
-    .map(({ foto_produto, nome_produto, preco_atual, preco_original }, i) => {
-      return `<li class="card-produto-oferta">
-                <div product-img>
-                    <img src="${urlBase}produto/imagem/${foto_produto}"alt="${nome_produto}" />
-                </div>
-                <div><h4>${nome_produto}</h4></div>
-                <div>
-                    <p class="desconto">${(
-                      100 -
-                      (preco_atual / preco_original) * 100
-                    ).toFixed(0)}% off</p>
-                    <h2>${preco_atual.toLocaleString("pt-br", {
-                      style: "currency",
-                      currency: "BRL",
-                    })}</h2>
-                    <p><span>em 12X de ${(preco_atual / 12).toLocaleString(
-                      "pt-br",
-                      {
-                        style: "currency",
-                        currency: "BRL",
-                      }
-                    )}</span></p>
-                </div>
-            </li>`;
-    })
-    .join("");
-  distribuirEventos(".card-produto-oferta", proutosIniciais[0].products);
 
+  produtosIniciais[0] = await buscarProdutos("ofertas");
+
+  campo.innerHTML = produtosIniciais[0].products
+    .map(renderCardProduto)
+    .join("");
+
+  distribuirEventos(".card-produto-oferta", produtosIniciais[0].products);
   spinner.hide();
 }
 
 buscarProdutosIniciais();
+
 function AbrirDetalhes(id) {
   window.location.href = `${urlBase}produto/${id}`;
 }
+
 function distribuirEventos(identificador, itens) {
   document.querySelectorAll(identificador).forEach((card, index) => {
     card.addEventListener("click", () => AbrirDetalhes(itens[index].id));
   });
 }
 
-async function buscarProdutos(filtro, params = null, page = 1, per_page = 3) {
-  const produtos = await fetch(
-    `${urlBase}produtos${
-      filtro ? `/${filtro}` : ""
-    }?page=${page}&per_page=${per_page}`,
-    {
-      method: params ? "POST" : "GET",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: params ? params : null,
+function renderCardProduto({
+  foto_produto,
+  nome_produto,
+  preco_atual,
+  preco_original,
+}) {
+  const desconto = (100 - (preco_atual / preco_original) * 100).toFixed(0);
+  return `<li class="card-produto-oferta">
+    ${
+      desconto > 0
+        ? `<span class="estiqueta-desconto">${desconto}% off</span>`
+        : ""
     }
-  )
-    .then((response) => response.json())
-    .catch((error) => console.error(error));
-  console.log(produtos);
-  return produtos;
+    <div product-img>
+        <img src="${urlBase}produto/imagem/${foto_produto}" alt="${nome_produto}" />
+    </div>
+    <div><h4>${nome_produto}</h4></div>
+    <div class="price-field">
+        <del class="desconto">R$${formatarValor(preco_original)}</del>
+        <h2 class="value">R$ ${formatarValor(preco_atual)}</h2>
+        <p><span class="value">em 12X de R$${formatarValor(
+          preco_atual
+        )}</span></p>
+    </div>
+  </li>`;
+}
+
+async function buscarProdutos(filtro, params = null, page = 1, per_page = 3) {
+  const url = `${urlBase}produtos${
+    filtro ? `/${filtro}` : ""
+  }?page=${page}&per_page=${per_page}`;
+
+  try {
+    const response = await fetch(url, {
+      method: params ? "POST" : "GET",
+      headers: { "Content-Type": "application/json" },
+      body: params ? params : null,
+    });
+    return await response.json();
+  } catch (error) {
+    console.error("Erro ao buscar produtos:", error);
+    return null;
+  }
 }
 
 async function buscarProdutosFiltrados(
   texto = document.querySelector("#texto-busca").value,
   ord = document.querySelector("#ordenar").value,
-  body = {
-    texto: texto,
-  },
+  body = { texto },
   page = 1,
   qntdPorPAge = 8
 ) {
-  if (texto == "") return;
-  let campo = document.querySelector(".section-container");
-  let spinner = new LoadingSpinner(campo);
+  if (!texto) return;
+
+  const campo = document.querySelector(".section-container");
+  const spinner = new LoadingSpinner(campo);
   spinner.show();
+
   const productsBuscados = await buscarProdutos(
     ord,
     JSON.stringify(body),
@@ -120,86 +130,93 @@ async function buscarProdutosFiltrados(
     qntdPorPAge
   );
   if (productsBuscados) {
-    console.log(productsBuscados);
-    showProducts(productsBuscados);
+    showProducts(productsBuscados, { body, ord, page, qntdPorPAge });
   }
+
   spinner.hide();
 }
-function showProducts(productsBuscados) {
+
+function showProducts(productsBuscados, filters) {
   document.querySelector(".section-container").innerHTML = `<div id="ofertas">
     <div id="produtos">
-    <div class="header">
-      <h3>Resultados: ${productsBuscados.total}</h3>
+      <div class="header">
+        <h3>Resultados: ${productsBuscados.total}</h3>
       </div>
       <ol>
-      ${productsBuscados.products
-        .map(({ foto_produto, nome_produto, preco_atual, preco_original }) => {
-          let desconto = (100 - (preco_atual / preco_original) * 100).toFixed(
-            0
-          );
-          return `<li class="card-produto-filtro">
-                <div product-img>
-                    <img src="${urlBase}/produto/imagem/${foto_produto}"alt="${nome_produto}" />
-                </div>
-                <div><h4>${nome_produto}</h4></div>
-                <div>
-                    <p class="desconto" >${
-                      desconto > 0 ? desconto + " %off" : ""
-                    }</p>
-                    <h2>${preco_atual.toLocaleString("pt-br", {
-                      style: "currency",
-                      currency: "BRL",
-                    })}</h2>
-                    <p><span>em 12X de ${(preco_atual / 12).toLocaleString(
-                      "pt-br",
-                      {
-                        style: "currency",
-                        currency: "BRL",
-                      }
-                    )}</span></p>
-                </div>
-            </li>`;
-        })
-        .join("")}
+        ${productsBuscados.products.map(renderCardProduto).join("")}
       </ol>
       <div class="produto-navegation">
-        <button type="submit" class="hovered" id="btn-inicio">${arrow()}</button>
-        <button type="submit" class="hovered" id="btn-retornar">${doubleArrow()}</button>
-        <div class="pages">pagina: ${productsBuscados.current_page} de ${
+        <button class="hovered" id="btn-retornar">${arrow()}</button>
+        <button class="hovered" id="btn-inicio">${doubleArrow()}</button>
+        <div class="pages">página: ${productsBuscados.current_page} de ${
     productsBuscados.pages
   }</div>
-        <button type="submit" class="rotate hovered" id="btn-avançar">${doubleArrow()}</button>
-        <button type="submit" class="rotate hovered" id="btn-fim">${arrow()}</button>
+        <button class="rotate hovered" id="btn-fim">${doubleArrow()}</button>
+        <button class="rotate hovered" id="btn-avancar">${arrow()}</button>
       </div>
     </div>
   </div>`;
-  distribuirEventos(".card-produto-filtro", productsBuscados.products);
-  document.querySelectorAll(".produto-navegation button").forEach((btn, i) => {
-    btn.addEventListener("click", () => {
-      const options = {
-        0: productsBuscados.current_page - 1,
-        1: 1,
-        2: productsBuscados.pages,
-        3: productsBuscados.current_page + 1,
-      };
-      if (productsBuscados.current_page == 1 && i == 0) {
-      } else if (
-        productsBuscados.current_page == productsBuscados.pages &&
-        (i == 2 || i == 3)
-      ) {
-        return;
-      } else {
-        buscarProdutosFiltrados(texto, ord, body, options[i], qntdPorPAge);
-      }
-    });
+
+  distribuirEventos(".card-produto-oferta", productsBuscados.products);
+
+  document.querySelector("#btn-retornar").addEventListener("click", () => {
+    if (productsBuscados.current_page > 1) {
+      buscarProdutosFiltrados(
+        filters.body.texto,
+        filters.ord,
+        filters.body,
+        productsBuscados.current_page - 1,
+        filters.qntdPorPAge
+      );
+    }
+  });
+
+  document.querySelector("#btn-inicio").addEventListener("click", () => {
+    buscarProdutosFiltrados(
+      filters.body.texto,
+      filters.ord,
+      filters.body,
+      1,
+      filters.qntdPorPAge
+    );
+  });
+
+  document.querySelector("#btn-fim").addEventListener("click", () => {
+    buscarProdutosFiltrados(
+      filters.body.texto,
+      filters.ord,
+      filters.body,
+      productsBuscados.pages,
+      filters.qntdPorPAge
+    );
+  });
+
+  document.querySelector("#btn-avancar").addEventListener("click", () => {
+    if (productsBuscados.current_page < productsBuscados.pages) {
+      buscarProdutosFiltrados(
+        filters.body.texto,
+        filters.ord,
+        filters.body,
+        productsBuscados.current_page + 1,
+        filters.qntdPorPAge
+      );
+    }
   });
 }
+
 async function mostrarMaisOfertas() {
   const campo = document.querySelector(".section-container");
-  const speener = new LoadingSpinner(campo);
-  speener.show();
-  const products = await buscarProdutos("ofertas", "", 1, 8);
-  showProducts(products);
+  const spinner = new LoadingSpinner(campo);
+  spinner.show();
 
-  speener.hide();
+  const products = await buscarProdutos("ofertas", "", 1, 8);
+  if (products)
+    showProducts(products, {
+      body: {},
+      ord: "ofertas",
+      page: 1,
+      qntdPorPAge: 8,
+    });
+
+  spinner.hide();
 }

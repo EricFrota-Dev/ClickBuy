@@ -34,10 +34,10 @@ const showOrder = () => {
             <span class="start"><img src="${urlBase}produto/imagem/${
               produto.foto_pedido
             }" alt="${produto.foto_pedido}"/></span>
-            <span class="middle">${produto.nome_produto} (x${
+            <span class="middle">${produto.nome_produto} </span>
+            <span class="end">R$ ${produto.subtotal.toFixed(2)}(x${
               produto.quantidade
             })</span>
-            <span class="end">R$ ${produto.subtotal.toFixed(2)}</span>
           </a>
         `
           )
