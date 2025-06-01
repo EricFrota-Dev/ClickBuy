@@ -1,4 +1,5 @@
 from datetime import date, timedelta
+import os
 
 import mercadopago
 from auth.token import token_required
@@ -7,7 +8,7 @@ from flask import current_app, jsonify, redirect, render_template, request, url_
 
 from models import Endereco, Pedido, PedidoProduto, Produto, User
 
-tempUrl = "https://light-labrador-composed.ngrok-free.app/"
+tempUrl = os.getenv("BASE_URL")
 
 class PrdidoController:
 
@@ -22,7 +23,6 @@ class PrdidoController:
 
         return render_template("pedidos.html", orders=orders)
         
-
     def register():
         data = request.get_json()
 
@@ -62,14 +62,12 @@ class PrdidoController:
             item = PedidoProduto(produto=produto, quantidade=qtd)
             itens_pedido.append(item)
 
-            # Adiciona o item à preferência do Mercado Pago
             preference_items.append({
                 "title": produto.nome_produto,
                 "quantity": qtd,
                 "unit_price": float(produto.preco_atual),
                 "currency_id": "BRL"
             })
-            
 
         endereco = Endereco.query.filter_by(
             user_id=user_id,
@@ -96,16 +94,32 @@ class PrdidoController:
             db.session.add(endereco)
             db.session.flush()
 
-        # Cria a preferência de pagamento
+        # 1. Cria o pedido primeiro
+        pedido = Pedido(
+            user_id=user_id,
+            loja_id=loja_id,
+            total=total,
+            status="pending",
+            data_pedido=date.today(),
+            data_criacao=date.today(),
+            data_entrega=date.today() + timedelta(days=entrega),
+            valor_frete=valor_frete,
+            endereco_id=endereco.id,
+            itens=itens_pedido
+        )
+        db.session.add(pedido)
+        db.session.flush()  # obtém o ID antes do commit
+
+        # 2. Cria a preferência com external_reference e back_urls corretos
         back_urls = {
-            "success": f"{tempUrl}pedido/overview/temp",
-            "failure": f"{tempUrl}pedido/overview/temp",
-            "pending": f"{tempUrl}pedido/overview/temp"
+            "success": f"{tempUrl}pedido/overview/{pedido.id}",
+            "failure": f"{tempUrl}pedido/overview/{pedido.id}",
+            "pending": f"{tempUrl}pedido/overview/{pedido.id}"
         }
 
         preference_data = {
             "items": preference_items,
-            "external_reference": "temp",  # usa "temp" por enquanto
+            "external_reference": str(pedido.id),
             "back_urls": back_urls,
             "auto_return": "approved",
         }
@@ -114,33 +128,9 @@ class PrdidoController:
         preference_response = sdk.preference().create(preference_data)
         init_point = preference_response["response"]["init_point"]
 
-        # Agora cria o pedido
-        pedido = Pedido(
-            user_id=user_id,
-            loja_id=loja_id,
-            total=total,
-            status="pending",
-            data_pedido=date.today(),
-            data_criacao=date.today(),
-            data_entrega = date.today() + timedelta(days=entrega),
-            valor_frete = valor_frete,
-            endereco_id=endereco.id,
-            itens=itens_pedido,
-            init_point=init_point  # agora sim!
-        )
-
-        db.session.add(pedido)
+        # 3. Atualiza o pedido com o init_point e commita
+        pedido.init_point = init_point
         db.session.commit()
-
-        # Atualiza a preferência com o ID real do pedido e os back_urls
-        sdk.preference().update(preference_response["response"]["id"], {
-            "external_reference": str(pedido.id),
-            "back_urls": {
-                "success": f"{tempUrl}pedido/overview/{pedido.id}",
-                "failure": f"{tempUrl}pedido/overview/{pedido.id}",
-                "pending": f"{tempUrl}pedido/overview/{pedido.id}"
-            }
-        })
 
         return jsonify(init_point=init_point), 201
     
@@ -160,7 +150,7 @@ class PrdidoController:
                 pedido.data_entrega = date.today() + tempo_estimado
                 pedido.status = "paid"
                 db.session.commit()
-
+        print("######################deu bom##################")
         return jsonify(status="ok"), 200
 
 
@@ -190,7 +180,7 @@ class PrdidoController:
             frete = 17.00
             prazo = 3
         else:  # Demais regiões
-            frete = 1
+            frete = 0
             prazo = 5
 
         return jsonify({
@@ -202,8 +192,13 @@ class PrdidoController:
     @token_required
     def checkout(current_user):
         return render_template("checkout.html")
-    
+
     @token_required
-    def overview(current_user,pedido_id):
-        pedido = Pedido.query.filter_by(id = pedido_id).first()
-        return render_template("overview.html",order=pedido.to_dict())
+    def overview(current_user, pedido_id):
+        pedido = Pedido.query.filter_by(id=pedido_id).first()
+
+        if not pedido:
+            return redirect(url_for("home"))  # ou retornar um erro 404
+
+        status = request.args.get("collection_status")
+        return render_template("overview.html", order=pedido.to_dict(), status=status)

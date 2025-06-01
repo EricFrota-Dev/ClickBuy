@@ -1,16 +1,16 @@
-#ofertas {
+.iniciais {
   background-color: var(--color-background);
   border-radius: 12px;
   margin: 10px 0;
   padding: 8px;
 }
-#ofertas .header {
+.iniciais .header {
   border-bottom: 1px solid var(--color-border);
   display: flex;
   justify-content: space-between;
   padding: 8px;
 }
-#ofertas .header h2 {
+.iniciais .header h2 {
   margin: 0;
 }
 #busca {
@@ -95,6 +95,12 @@ select:hover {
 }
 #produtos li:hover {
   scale: 102%;
+}
+#produtos li > div:first-of-type {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  background-color: white;
 }
 #produtos li div img,
 .product-img {

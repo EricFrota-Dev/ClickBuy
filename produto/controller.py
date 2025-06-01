@@ -1,11 +1,11 @@
 from flask import jsonify, render_template, request, send_from_directory
 from flask import current_app
-from sqlalchemy import or_
+from sqlalchemy import func, or_
 from auth.token import token_required
 from constants import categorias
 from extensions import db
 import os
-from models import Loja, Produto, User
+from models import Loja, PedidoProduto, Produto, User
 from werkzeug.utils import secure_filename
 
 class ProdutoController:
@@ -176,7 +176,8 @@ class ProdutoController:
     def busca_filtrada(filter, page=1, per_page=10):
         page = request.args.get('page', default=1, type=int)
         per_page = request.args.get('per_page', default=10, type=int)
-        data = request.get_json()
+        data = request.get_json() or {}  # ← garante que seja um dicionário
+
         textoBusca = data.get("texto", "").strip().lower()
 
         query = Produto.query
@@ -218,3 +219,38 @@ class ProdutoController:
             query = query.filter(Produto.preco <= max_preco)
         produtos = query.all()
         return jsonify([p.to_dict() for p in produtos])
+    
+    def produtos_mais_pedidos():
+        page = request.args.get('page', default=1, type=int)
+        per_page = request.args.get('per_page', default=10, type=int)
+
+        subquery = (
+            db.session.query(
+                PedidoProduto.id_produto,
+                func.sum(PedidoProduto.quantidade).label('total_pedidos')
+            )
+            .group_by(PedidoProduto.id_produto)
+            .subquery()
+        )
+
+        query = (
+            db.session.query(Produto, subquery.c.total_pedidos)
+            .join(subquery, Produto.id == subquery.c.id_produto)
+            .order_by(subquery.c.total_pedidos.desc())
+        )
+
+        total = query.count()
+        produtos_paginados = query.offset((page - 1) * per_page).limit(per_page).all()
+
+        return {
+            "total": total,
+            "pages": (total + per_page - 1) // per_page,
+            "current_page": page,
+            "products": [
+                {
+                    **produto.to_dict(),
+                    "total_pedidos": int(total_pedidos)
+                }
+                for produto, total_pedidos in produtos_paginados
+            ]
+        }

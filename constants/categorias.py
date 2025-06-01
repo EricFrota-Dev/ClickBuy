@@ -3,5 +3,10 @@ categorias = [
     "calçados",
     "roupas",
     "eletrodomestiicos",
-    "acessórios"
+    "acessórios",
+    "Bolsas e Mochilas",
+    "Eletrônicos",
+    "Informática",
+    "Fotografia",
+    "Wearables"
 ]

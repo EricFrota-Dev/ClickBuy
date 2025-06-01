@@ -4,10 +4,11 @@ import { LoadingSpinner } from "./loadingSpiner.js";
 
 const buscaBtn = document.querySelector("#busca-btn");
 buscaBtn.innerHTML = lupaIcon;
-
-// estrutura inicial da página
+let filtro = "";
 function montarEstruturaInicial() {
-  document.querySelector(".section-container").innerHTML = `<div id="ofertas">
+  document.querySelector(
+    ".section-container"
+  ).innerHTML = `<div id="ofertas" class="hide iniciais">
     <div class="header">
       <h2>Ofertas</h2>
       <button id="ver_mais_ofertas" class="btn_padrao">Ver Mais</button>
@@ -15,15 +16,29 @@ function montarEstruturaInicial() {
     <div id="produtos">
       <ol></ol>
     </div>
-  </div>`;
+  </div>
+  <div id="populares" class="hide iniciais">
+  <div class="header">
+      <h2>Populares</h2>
+      <button id="ver_mais_ofertas" class="btn_padrao">Ver Mais</button>
+    </div>
+    <div id="produtos">
+      <ol></ol>
+    </div></div>`;
 }
 
 montarEstruturaInicial();
 
 document.querySelector("#busca-form").addEventListener("submit", (e) => {
   e.preventDefault();
-  buscarProdutosFiltrados();
+  let texto = document.querySelector("#texto-busca");
+  if (texto.value) {
+    buscarProdutosFiltrados();
+  }
+  return;
 });
+
+let filtrosAtuais = {};
 
 let produtosIniciais = [
   {
@@ -38,31 +53,52 @@ async function buscarProdutosIniciais() {
   document.querySelector("#ver_mais_ofertas").addEventListener("click", () => {
     mostrarMaisOfertas();
   });
-
-  let campo = document.querySelector("#produtos ol");
-  let spinner = new LoadingSpinner(campo);
+  let ofertas = document.querySelector("#ofertas");
+  let populares = document.querySelector("#populares");
+  let campos = document.querySelectorAll("#produtos ol");
+  let spinner = new LoadingSpinner(
+    document.querySelector(".section-container")
+  );
   spinner.show();
 
-  produtosIniciais[0] = await buscarProdutos("ofertas");
+  produtosIniciais[0] = await buscarProdutos({ filtro: "ofertas" });
+  produtosIniciais[1] = await buscarProdutos({ filtro: "mais-pedidos" });
 
-  campo.innerHTML = produtosIniciais[0].products
-    .map(renderCardProduto)
-    .join("");
+  if (campos[0]) {
+    campos[0].innerHTML = produtosIniciais[0].products
+      .map(renderCardProduto)
+      .join("");
+    distribuirEventos(
+      campos[0],
+      ".card-produto-oferta",
+      produtosIniciais[0].products
+    );
+  }
 
-  distribuirEventos(".card-produto-oferta", produtosIniciais[0].products);
+  if (campos[1]) {
+    campos[1].innerHTML = produtosIniciais[1].products
+      .map(renderCardProduto)
+      .join("");
+    distribuirEventos(
+      campos[1],
+      ".card-produto-oferta",
+      produtosIniciais[1].products
+    );
+  }
+  ofertas.classList.remove("hide");
+  populares.classList.remove("hide");
   spinner.hide();
+}
+function distribuirEventos(container, identificador, itens) {
+  container.querySelectorAll(identificador).forEach((card, index) => {
+    card.addEventListener("click", () => AbrirDetalhes(itens[index].id));
+  });
 }
 
 buscarProdutosIniciais();
 
 function AbrirDetalhes(id) {
   window.location.href = `${urlBase}produto/${id}`;
-}
-
-function distribuirEventos(identificador, itens) {
-  document.querySelectorAll(identificador).forEach((card, index) => {
-    card.addEventListener("click", () => AbrirDetalhes(itens[index].id));
-  });
 }
 
 function renderCardProduto({
@@ -92,17 +128,26 @@ function renderCardProduto({
   </li>`;
 }
 
-async function buscarProdutos(filtro, params = null, page = 1, per_page = 3) {
+async function buscarProdutos({
+  filtro = "",
+  texto = null,
+  page = 1,
+  per_page = 4,
+}) {
+  const usarPost = texto && texto.trim() !== "";
   const url = `${urlBase}produtos${
-    filtro ? `/${filtro}` : ""
+    usarPost ? `/${filtro}` : filtro ? `/${filtro}` : ""
   }?page=${page}&per_page=${per_page}`;
 
   try {
     const response = await fetch(url, {
-      method: params ? "POST" : "GET",
-      headers: { "Content-Type": "application/json" },
-      body: params ? params : null,
+      method: usarPost ? "POST" : "GET",
+      headers: usarPost ? { "Content-Type": "application/json" } : {},
+      body: usarPost ? JSON.stringify({ texto }) : null,
     });
+
+    if (!response.ok) throw new Error("Erro na requisição");
+
     return await response.json();
   } catch (error) {
     console.error("Erro ao buscar produtos:", error);
@@ -113,31 +158,42 @@ async function buscarProdutos(filtro, params = null, page = 1, per_page = 3) {
 async function buscarProdutosFiltrados(
   texto = document.querySelector("#texto-busca").value,
   ord = document.querySelector("#ordenar").value,
-  body = { texto },
   page = 1,
   qntdPorPAge = 8
 ) {
-  if (!texto) return;
+  filtrosAtuais = { texto, ord, page, qntdPorPAge };
 
   const campo = document.querySelector(".section-container");
   const spinner = new LoadingSpinner(campo);
   spinner.show();
+  console.log(texto);
+  let productsBuscados = {};
+  if (texto) {
+    productsBuscados = await buscarProdutos({
+      filtro: ord,
+      texto,
+      page,
+      per_page: qntdPorPAge,
+    });
+  } else {
+    productsBuscados = await buscarProdutos({
+      filtro: filtro,
+      texto: "",
+      page,
+      per_page: qntdPorPAge,
+    });
+  }
 
-  const productsBuscados = await buscarProdutos(
-    ord,
-    JSON.stringify(body),
-    page,
-    qntdPorPAge
-  );
   if (productsBuscados) {
-    showProducts(productsBuscados, { body, ord, page, qntdPorPAge });
+    showProducts(productsBuscados);
   }
 
   spinner.hide();
 }
 
-function showProducts(productsBuscados, filters) {
-  document.querySelector(".section-container").innerHTML = `<div id="ofertas">
+function showProducts(productsBuscados) {
+  const campo = document.querySelector(".section-container");
+  campo.innerHTML = `<div id="ofertas" class="iniciais">
     <div id="produtos">
       <div class="header">
         <h3>Resultados: ${productsBuscados.total}</h3>
@@ -157,48 +213,44 @@ function showProducts(productsBuscados, filters) {
     </div>
   </div>`;
 
-  distribuirEventos(".card-produto-oferta", productsBuscados.products);
+  distribuirEventos(campo, ".card-produto-oferta", productsBuscados.products);
 
   document.querySelector("#btn-retornar").addEventListener("click", () => {
     if (productsBuscados.current_page > 1) {
       buscarProdutosFiltrados(
-        filters.body.texto,
-        filters.ord,
-        filters.body,
+        filtrosAtuais.texto,
+        filtrosAtuais.ord,
         productsBuscados.current_page - 1,
-        filters.qntdPorPAge
+        filtrosAtuais.qntdPorPAge
       );
     }
   });
 
   document.querySelector("#btn-inicio").addEventListener("click", () => {
     buscarProdutosFiltrados(
-      filters.body.texto,
-      filters.ord,
-      filters.body,
+      filtrosAtuais.texto,
+      filtrosAtuais.ord,
       1,
-      filters.qntdPorPAge
+      filtrosAtuais.qntdPorPAge
     );
   });
 
   document.querySelector("#btn-fim").addEventListener("click", () => {
     buscarProdutosFiltrados(
-      filters.body.texto,
-      filters.ord,
-      filters.body,
+      filtrosAtuais.texto,
+      filtrosAtuais.ord,
       productsBuscados.pages,
-      filters.qntdPorPAge
+      filtrosAtuais.qntdPorPAge
     );
   });
 
   document.querySelector("#btn-avancar").addEventListener("click", () => {
     if (productsBuscados.current_page < productsBuscados.pages) {
       buscarProdutosFiltrados(
-        filters.body.texto,
-        filters.ord,
-        filters.body,
+        filtrosAtuais.texto,
+        filtrosAtuais.ord,
         productsBuscados.current_page + 1,
-        filters.qntdPorPAge
+        filtrosAtuais.qntdPorPAge
       );
     }
   });
@@ -208,15 +260,13 @@ async function mostrarMaisOfertas() {
   const campo = document.querySelector(".section-container");
   const spinner = new LoadingSpinner(campo);
   spinner.show();
-
-  const products = await buscarProdutos("ofertas", "", 1, 8);
-  if (products)
-    showProducts(products, {
-      body: {},
-      ord: "ofertas",
-      page: 1,
-      qntdPorPAge: 8,
-    });
+  filtro = "ofertas";
+  const products = await buscarProdutos({
+    filtro: filtro,
+    page: 1,
+    per_page: 8,
+  });
+  if (products) showProducts(products);
 
   spinner.hide();
 }

@@ -70,7 +70,7 @@ export const lupaIcon = `<svg width="20" height="20" viewBox="0 0 800 800" fill=
 </svg>
 `;
 
-export const urlBase = "https://light-labrador-composed.ngrok-free.app/";
+export const urlBase = window.location.origin + "/";
 
 export function formatarValor(valor) {
   const [inteira, decimal] = valor.toFixed(2).split(".");

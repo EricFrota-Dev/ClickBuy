@@ -7,7 +7,20 @@
 
 <div id="overview"></div>
 
-{% endblock %} {% block extra_js %}
+{% endblock %} {% if status == "approved" %}
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    // Exemplo usando Toastify.js
+    Toastify({
+      text: "Pagamento aprovado!",
+      duration: 3000,
+      gravity: "top",
+      position: "center",
+      backgroundColor: "#28a745",
+    }).showToast();
+  });
+</script>
+{% endif %} {% block extra_js %}
 <script id="orders-data" type="application/json">
   {{ order | tojson }}
 </script>

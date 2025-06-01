@@ -12,5 +12,6 @@ bp.route("/produto/register/<int:loja_id>", methods=["POST"])(ProdutoController.
 bp.route("/produto/update/<int:loja_id>/<int:id>", methods=["PUT"])(ProdutoController.update)
 bp.route("/produto/delete/<int:loja_id>/<int:id>", methods=["DELETE"])(ProdutoController.delete)
 bp.route("/produtos/ofertas", methods=["GET"])(ProdutoController.buscar_ofertas)
-bp.route("/produtos/<string:filter>", methods=["POST"])(ProdutoController.busca_filtrada)
+bp.route("/produtos/<string:filter>", methods=["GET", "POST"])(ProdutoController.busca_filtrada)
 bp.route("/produtos/categoria/<string:categoria>", methods=["GET"])(ProdutoController.buscar_por_categoria)
+bp.route("/produtos/mais-pedidos", methods=["GET"])(ProdutoController.produtos_mais_pedidos)
