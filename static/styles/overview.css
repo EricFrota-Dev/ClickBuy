@@ -131,3 +131,6 @@
 .order-address strong {
   color: var(--color-primary);
 }
+.data-prevista {
+  color: var(--color-success) !important;
+}

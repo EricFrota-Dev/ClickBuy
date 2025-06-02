@@ -20,7 +20,7 @@ function montarEstruturaInicial() {
   <div id="populares" class="hide iniciais">
   <div class="header">
       <h2>Populares</h2>
-      <button id="ver_mais_ofertas" class="btn_padrao">Ver Mais</button>
+      <button id="ver_mais_populares" class="btn_padrao">Ver Mais</button>
     </div>
     <div id="produtos">
       <ol></ol>
@@ -51,8 +51,13 @@ let produtosIniciais = [
 
 async function buscarProdutosIniciais() {
   document.querySelector("#ver_mais_ofertas").addEventListener("click", () => {
-    mostrarMaisOfertas();
+    mostrarMaisOfertas("ofertas");
   });
+  document
+    .querySelector("#ver_mais_populares")
+    .addEventListener("click", () => {
+      mostrarMaisOfertas("mais-pedidos");
+    });
   let ofertas = document.querySelector("#ofertas");
   let populares = document.querySelector("#populares");
   let campos = document.querySelectorAll("#produtos ol");
@@ -256,11 +261,11 @@ function showProducts(productsBuscados) {
   });
 }
 
-async function mostrarMaisOfertas() {
+async function mostrarMaisOfertas(cat) {
   const campo = document.querySelector(".section-container");
   const spinner = new LoadingSpinner(campo);
   spinner.show();
-  filtro = "ofertas";
+  filtro = cat;
   const products = await buscarProdutos({
     filtro: filtro,
     page: 1,

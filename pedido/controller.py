@@ -1,7 +1,9 @@
 from datetime import date, timedelta
+import time
 import os
 
 import mercadopago
+import stripe
 from auth.token import token_required
 from extensions import db
 from flask import current_app, jsonify, redirect, render_template, request, url_for
@@ -63,10 +65,9 @@ class PrdidoController:
             itens_pedido.append(item)
 
             preference_items.append({
-                "title": produto.nome_produto,
+                "name": produto.nome_produto,
                 "quantity": qtd,
-                "unit_price": float(produto.preco_atual),
-                "currency_id": "BRL"
+                "amount": float(produto.preco_atual),
             })
 
         endereco = Endereco.query.filter_by(
@@ -94,7 +95,7 @@ class PrdidoController:
             db.session.add(endereco)
             db.session.flush()
 
-        # 1. Cria o pedido primeiro
+        # Cria o pedido
         pedido = Pedido(
             user_id=user_id,
             loja_id=loja_id,
@@ -108,51 +109,60 @@ class PrdidoController:
             itens=itens_pedido
         )
         db.session.add(pedido)
-        db.session.flush()  # obtém o ID antes do commit
+        db.session.flush()
 
-        # 2. Cria a preferência com external_reference e back_urls corretos
-        back_urls = {
-            "success": f"{tempUrl}pedido/overview/{pedido.id}",
-            "failure": f"{tempUrl}pedido/overview/{pedido.id}",
-            "pending": f"{tempUrl}pedido/overview/{pedido.id}"
-        }
+        # Cria a sessão de checkout no Stripe
+        session = stripe.checkout.Session.create(
+            payment_method_types=["cart"],
+            line_items=[{
+                'price_data': {
+                    'currency': 'brl',
+                    'product_data': {
+                        'name': item["name"]
+                    },
+                    'unit_amount': int(item["amount"] * 100),  # O Stripe trabalha com centavos
+                },
+                'quantity': item["quantity"],
+            } for item in preference_items],
+            mode="payment",
+            success_url=f"{tempUrl}pedido/overview/{pedido.id}",
+            cancel_url=f"{tempUrl}pedido/overview/{pedido.id}",
+            metadata={"pedido_id": str(pedido.id)}
+        )
 
-        preference_data = {
-            "items": preference_items,
-            "external_reference": str(pedido.id),
-            "back_urls": back_urls,
-            "auto_return": "approved",
-        }
-
-        sdk = mercadopago.SDK(current_app.config["MERCADO_PAGO_ACCESS_TOKEN"])
-        preference_response = sdk.preference().create(preference_data)
-        init_point = preference_response["response"]["init_point"]
-
-        # 3. Atualiza o pedido com o init_point e commita
-        pedido.init_point = init_point
+        pedido.init_point = session.url 
         db.session.commit()
 
-        return jsonify(init_point=init_point), 201
+        return jsonify({
+            "id": session.id,
+            "url": session.url
+        }), 201
     
-    def mp_webhook():
-        data = request.get_json()
-        payment_id = data.get("data", {}).get("id")
+    def stripe_webhook():
+        payload = request.get_data(as_text=True)
+        sig_header = request.headers.get('Stripe-Signature')
+        endpoint_secret = os.getenv("STRIPE_WEBHOOK")  # Sua chave secreta do webhook
 
-        sdk = mercadopago.SDK(current_app.config["MERCADO_PAGO_ACCESS_TOKEN"])
-        result = sdk.payment().get(payment_id)
-        payment = result["response"]
+        try:
+            event = stripe.Webhook.construct_event(
+                payload, sig_header, endpoint_secret
+            )
+        except ValueError as e:
+            return jsonify(error="Invalid payload"), 400
+        except stripe.error.SignatureVerificationError as e:
+            return jsonify(error="Invalid signature"), 400
 
-        if payment["status"] == "approved":
-            pedido_id = payment["external_reference"]
+        # Processar o evento
+        if event["type"] == "checkout.session.completed":
+            session = event["data"]["object"]
+            pedido_id = session["metadata"]["pedido_id"]
+
             pedido = Pedido.query.get(pedido_id)
             if pedido:
-                tempo_estimado = pedido.entrega - pedido.data_pedido
-                pedido.data_entrega = date.today() + tempo_estimado
                 pedido.status = "paid"
                 db.session.commit()
-        print("######################deu bom##################")
+        
         return jsonify(status="ok"), 200
-
 
     def update():
         data = request.get_json()

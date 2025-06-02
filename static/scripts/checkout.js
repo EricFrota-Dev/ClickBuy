@@ -2,6 +2,9 @@ import { urlBase } from "./constants.js";
 import { cart } from "./index.js";
 import { LoadingSpinner } from "./loadingSpiner.js";
 import { user } from "./userData.js";
+const stripe = Stripe(
+  "pk_live_51RVMrXBpe3UKgZbLMF2yWVSXfhSD90IImp8dDr3rsrsoRDAdwSZIz1IcCQJYjUC4uUgRJRf1FlibnAb3tpbzuKb100nJOQerEr"
+);
 
 const checkoutContainer = document.querySelector(".itens-carrinho");
 document.querySelector("#cart").classList.add("hide");
@@ -162,18 +165,23 @@ btnComprar.addEventListener("click", async () => {
   console.log(pedido);
   const loadingSpiner = new LoadingSpinner(document.querySelector("main"));
   loadingSpiner.show();
-  const response = await fetch(`${urlBase}pedido/register`, {
+  await fetch(`${urlBase}pedido/register`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     credentials: "include",
     body: JSON.stringify(pedido),
-  });
-  cart.clearCartProducts();
-  const data = await response.json();
-  if (data.init_point) {
-    window.location.href = data.init_point;
-  } else {
-    console.error("Erro ao criar preferência de pagamento", data);
-  }
+  })
+    .then((response) => response.json())
+    .then((data) => {
+      // Redireciona para o Stripe
+      cart.clearCartProducts();
+      return stripe.redirectToCheckout({ sessionId: data.id });
+    })
+    .then((result) => {
+      if (result.error) {
+        alert(result.error.message);
+      }
+    })
+    .catch((error) => console.error("Erro:", error));
   loadingSpiner.hide();
 });

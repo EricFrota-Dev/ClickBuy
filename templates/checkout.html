@@ -64,6 +64,7 @@
   </div>
 </div>
 {% endblock %} {% block extra_js %}
+<script src="https://js.stripe.com/v3/"></script>
 <script
   type="module"
   src="{{ url_for('static', filename='scripts/checkout.js') }}"
