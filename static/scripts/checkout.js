@@ -175,6 +175,9 @@ btnComprar.addEventListener("click", async () => {
     .then((data) => {
       // Redireciona para o Stripe
       cart.clearCartProducts();
+      window.addEventListener("pageshow", () => {
+        window.location.href = `${urlBase}pedido/overview/${data}`;
+      });
       return stripe.redirectToCheckout({ sessionId: data.id });
     })
     .then((result) => {
